@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>축제 캘린더 | LocalHub</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">본문 바로가기</a>
+<header class="app-header">
+  <div class="header-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">L</span><span>LocalHub</span></a>
+    <nav class="main-nav" aria-label="주요 메뉴">
+      <a class="nav-link" href="index.html">홈</a>
+      <a class="nav-link" href="explore.html">지역 탐색</a>
+      <a class="nav-link" href="festival.html">축제 캘린더</a>
+      <a class="nav-link" href="board.html">커뮤니티</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" type="button" data-chat-toggle aria-label="챗봇 열기">💬</button>
+      <button class="icon-btn mobile-nav-button" type="button" aria-label="메뉴">☰</button>
+    </div>
+  </div>
+</header>
+
+
+<main class="page" id="main">
+  <div class="breadcrumb">홈 &gt; 부산 &gt; 축제 캘린더</div>
+  <div class="page-heading">
+    <div><h1>부산 축제 캘린더</h1><p>부산의 축제·공연·행사 일정을 날짜별로 확인하세요.</p></div>
+  </div>
+  <div class="notice">선택 기능인 축제 캘린더를 MVP에 포함했습니다. 실제 구현 시 제공 JSON의 시작일·종료일을 달력 컴포넌트와 연동합니다.</div>
+
+  <section class="calendar-shell">
+    <div class="calendar-head">
+      <button class="btn btn-ghost" type="button">← 이전 달</button>
+      <h2>2026년 7월</h2>
+      <button class="btn btn-ghost" type="button">다음 달 →</button>
+    </div>
+    <div class="calendar-grid">
+      <div class="calendar-cell muted"><span class="calendar-day">28</span></div>
+      <div class="calendar-cell muted"><span class="calendar-day">29</span></div>
+      <div class="calendar-cell muted"><span class="calendar-day">30</span></div>
+      <div class="calendar-cell"><span class="calendar-day">1</span></div>
+      <div class="calendar-cell"><span class="calendar-day">2</span></div>
+      <div class="calendar-cell"><span class="calendar-day">3</span><span class="event-chip">부산 야외영화제</span></div>
+      <div class="calendar-cell"><span class="calendar-day">4</span></div>
+      <div class="calendar-cell"><span class="calendar-day">5</span></div>
+      <div class="calendar-cell"><span class="calendar-day">6</span><span class="event-chip teal">광안리 해변 음악회</span></div>
+      <div class="calendar-cell"><span class="calendar-day">7</span></div>
+      <div class="calendar-cell"><span class="calendar-day">8</span></div>
+      <div class="calendar-cell"><span class="calendar-day">9</span></div>
+      <div class="calendar-cell"><span class="calendar-day">10</span><span class="event-chip orange">영도 문화 체험</span></div>
+      <div class="calendar-cell"><span class="calendar-day">11</span></div>
+      <div class="calendar-cell"><span class="calendar-day">12</span></div>
+      <div class="calendar-cell"><span class="calendar-day">13</span></div>
+      <div class="calendar-cell"><span class="calendar-day">14</span><span class="event-chip">부산 바다축제</span></div>
+      <div class="calendar-cell"><span class="calendar-day">15</span></div>
+      <div class="calendar-cell"><span class="calendar-day">16</span></div>
+      <div class="calendar-cell"><span class="calendar-day">17</span></div>
+      <div class="calendar-cell"><span class="calendar-day">18</span><span class="event-chip teal">광안리 야간 산책</span></div>
+      <div class="calendar-cell"><span class="calendar-day">19</span></div>
+      <div class="calendar-cell"><span class="calendar-day">20</span></div>
+      <div class="calendar-cell"><span class="calendar-day">21</span></div>
+      <div class="calendar-cell"><span class="calendar-day">22</span></div>
+      <div class="calendar-cell"><span class="calendar-day">23</span><span class="event-chip orange">부산 미식 문화 행사</span></div>
+      <div class="calendar-cell"><span class="calendar-day">24</span></div>
+      <div class="calendar-cell"><span class="calendar-day">25</span></div>
+      <div class="calendar-cell"><span class="calendar-day">26</span></div>
+      <div class="calendar-cell"><span class="calendar-day">27</span></div>
+      <div class="calendar-cell"><span class="calendar-day">28</span></div>
+      <div class="calendar-cell"><span class="calendar-day">29</span></div>
+      <div class="calendar-cell"><span class="calendar-day">30</span></div>
+      <div class="calendar-cell"><span class="calendar-day">31</span></div>
+      <div class="calendar-cell muted"><span class="calendar-day">1</span></div>
+    </div>
+  </section>
+</main>
+
+
+<button class="chat-fab" type="button" data-chat-toggle aria-label="LocalHub 챗봇 열기">💬</button>
+<section class="chat-panel" data-chat-panel aria-label="LocalHub 챗봇">
+  <header class="chat-head">
+    <div><h3>LocalHub 챗</h3><small>부산 지역 정보 도우미</small></div>
+    <button class="chat-close" type="button" data-chat-close aria-label="닫기">×</button>
+  </header>
+  <div class="chat-body" data-chat-body>
+    <div class="message bot">안녕하세요. 관광지, 축제, 맛집, 여행 코스 또는 커뮤니티 게시글을 질문해 주세요.</div>
+  </div>
+  <form class="chat-input" data-chat-form>
+    <input class="input" data-chat-input placeholder="예: 이번 주말 부산 축제 알려줘" />
+    <button class="btn btn-primary" type="submit">전송</button>
+  </form>
+</section>
+
+
+<footer class="app-footer">
+  <div class="footer-inner">
+    <span>© 2026 LocalHub · 부산 지역 정보 공유 커뮤니티</span>
+    <span>공공데이터 기반 교육용 SPA 프로토타입</span>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
