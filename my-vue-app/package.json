@@ -1,5 +1,5 @@
 {
-  "name": "busan-localhub",
+  "name": "my-vue-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.39"
+    "axios": "^1.18.1",
+    "leaflet": "^1.9.4",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.39",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
