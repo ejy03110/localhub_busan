@@ -1,0 +1,816 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Busan LocalHub 기획안</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e5e7eb;
+      --primary: #1167d8;
+      --primary-soft: #eaf3ff;
+      --accent: #00a6a6;
+      --danger: #d9485f;
+      --warning: #d98b00;
+      --shadow: 0 18px 50px rgba(27, 45, 78, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(17,103,216,.13), transparent 28%),
+        radial-gradient(circle at top right, rgba(0,166,166,.10), transparent 22%),
+        var(--bg);
+      font-family: Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 20px;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(18px);
+      border-right: 1px solid rgba(229,231,235,.9);
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: #fff;
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 24px rgba(17,103,216,.25);
+    }
+
+    .brand strong { display:block; font-size: 17px; }
+    .brand span { display:block; color: var(--muted); font-size: 12px; }
+
+    nav a {
+      display: block;
+      padding: 10px 13px;
+      margin: 5px 0;
+      border-radius: 12px;
+      color: #475467;
+      font-size: 14px;
+    }
+
+    nav a:hover, nav a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .aside-note {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 22px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #101828;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 300px));
+      margin: 0 auto;
+      padding: 34px 28px 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 52px;
+      border-radius: 30px;
+      background:
+        linear-gradient(120deg, rgba(7,31,71,.94), rgba(17,103,216,.82)),
+        linear-gradient(120deg, #0d2c55, #1167d8);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      right: -140px;
+      top: -180px;
+      border: 70px solid rgba(255,255,255,.08);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 18px 0 12px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255,255,255,.84);
+      font-size: 17px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .hero-tags span {
+      padding: 9px 13px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      font-size: 13px;
+    }
+
+    section { margin-top: 34px; }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid rgba(229,231,235,.95);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 9px 28px rgba(16,24,40,.06);
+      padding: 23px;
+    }
+
+    .card h3 { margin: 0 0 10px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--primary-soft);
+      font-size: 21px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      padding: 22px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      border: 1px solid var(--line);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 30px;
+      letter-spacing: -.04em;
+    }
+
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flow-step {
+      min-height: 118px;
+      padding: 16px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(16,24,40,.04);
+    }
+
+    .flow-step b { display:block; font-size: 25px; margin-bottom: 8px; }
+
+    .moscow {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 15px;
+    }
+
+    .priority {
+      border-radius: 20px;
+      padding: 22px;
+      color: white;
+    }
+
+    .must { background: linear-gradient(135deg, #172b4d, #0d5db8); }
+    .should { background: linear-gradient(135deg, #006c75, #00a6a6); }
+    .wont { background: linear-gradient(135deg, #5b6473, #7d8797); }
+
+    .priority h3 { margin: 0 0 12px; }
+    .priority ul { margin: 0; padding-left: 19px; font-size: 13px; }
+    .priority li { margin: 7px 0; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .data-table th { background: var(--surface-2); color: #475467; }
+    .data-table tr:last-child td { border-bottom: 0; }
+
+    .bars { display: grid; gap: 12px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 58px;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #edf2f7;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .ui-shell {
+      border: 1px solid #d9e0ea;
+      border-radius: 22px;
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 18px 44px rgba(16,24,40,.10);
+    }
+
+    .browser-bar {
+      height: 42px;
+      background: #edf1f6;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 7px;
+    }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; background:#b9c2ce; }
+    .mock-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 20px;
+      border-bottom:1px solid var(--line);
+      font-size:13px;
+    }
+
+    .mock-nav { display:flex; gap:16px; color:#667085; }
+    .mock-body { padding: 20px; background:#f8fafc; }
+
+    .mock-hero {
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+      padding:24px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#eaf3ff,#e9fbf9);
+    }
+
+    .mock-map {
+      min-height: 210px;
+      border-radius:16px;
+      background:
+        linear-gradient(45deg, transparent 48%, rgba(17,103,216,.14) 49%, rgba(17,103,216,.14) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(0,166,166,.12) 49%, rgba(0,166,166,.12) 51%, transparent 52%),
+        #f4f7fb;
+      background-size: 48px 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .pin {
+      position:absolute;
+      width:26px;
+      height:26px;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      background:var(--danger);
+      box-shadow:0 7px 18px rgba(217,72,95,.3);
+    }
+
+    .pin::after {
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:white;
+      position:absolute;
+      top:9px;
+      left:9px;
+    }
+
+    .pin.a { left:22%; top:38%; }
+    .pin.b { left:58%; top:24%; background:var(--primary); }
+    .pin.c { left:70%; top:62%; background:var(--accent); }
+
+    .post-list {
+      display:grid;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .post {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:13px 14px;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:13px;
+      font-size:13px;
+    }
+
+    .tag {
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      background:var(--primary-soft);
+      color:var(--primary);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .chatbot {
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      width:54px;
+      height:54px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 10px 24px rgba(17,103,216,.28);
+      font-size:22px;
+    }
+
+    .decision {
+      border-left: 4px solid var(--primary);
+      padding-left: 16px;
+      margin: 10px 0;
+    }
+
+    .decision strong { display:block; margin-bottom:4px; }
+
+    footer {
+      margin-top: 36px;
+      padding: 24px;
+      border-radius: 20px;
+      background: #101828;
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+    }
+
+    .small { font-size:12px; color:var(--muted); }
+
+    @media (max-width: 980px) {
+      .layout { display:block; }
+      aside { position:relative; height:auto; border-right:0; border-bottom:1px solid var(--line); }
+      nav { display:flex; overflow:auto; gap:6px; }
+      nav a { white-space:nowrap; }
+      .aside-note { display:none; }
+      main { width:100%; padding:20px 16px 60px; }
+      .grid-4, .grid-3, .grid-2, .moscow, .flow { grid-template-columns:1fr; }
+      .hero { padding:34px 24px; }
+      .mock-hero { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <div>
+          <strong>Busan LocalHub</strong>
+          <span>팀 내부 기획안 · v0.1</span>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#overview" class="active">프로젝트 개요</a>
+        <a href="#problem">기획 배경</a>
+        <a href="#users">사용자</a>
+        <a href="#data">데이터</a>
+        <a href="#functions">기능</a>
+        <a href="#flow">서비스 흐름</a>
+        <a href="#ui">UI 구상</a>
+        <a href="#scope">MVP 범위</a>
+        <a href="#discussion">회의 항목</a>
+      </nav>
+
+      <div class="aside-note">
+        <strong>핵심 방향</strong><br>
+        공공데이터 조회 서비스가 아니라<br>
+        <b>장소 중심 익명 커뮤니티</b>
+      </div>
+    </aside>
+
+    <main>
+      <header class="hero" id="overview">
+        <span class="eyebrow">📍 부산 권역 · 공공데이터 기반</span>
+        <h1>지역 정보와 실제 경험이 연결되는 익명 커뮤니티</h1>
+        <p>
+          부산의 관광지·문화시설·숙박·쇼핑 등 공공데이터를 확인하고,
+          지역 주민과 관광객이 장소별 질문·후기·추천·현장 정보를 익명으로 공유하는 플랫폼입니다.
+        </p>
+        <div class="hero-tags">
+          <span>Vue.js 3 SPA</span>
+          <span>localStorage 익명 게시판</span>
+          <span>OpenAI 지역정보 챗봇</span>
+          <span>지도·대시보드 연계</span>
+        </div>
+      </header>
+
+      <section id="problem">
+        <div class="section-title">
+          <div>
+            <h2>왜 이 서비스를 만드는가</h2>
+            <p>객관적인 장소 정보와 실제 이용자의 경험을 연결합니다.</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <article class="card">
+            <div class="icon">📚</div>
+            <h3>공공데이터의 낮은 접근성</h3>
+            <p>데이터는 신뢰할 수 있지만 파일과 코드 형태로 제공되어 일반 사용자가 활용하기 어렵습니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">💬</div>
+            <h3>실시간 경험 정보 부족</h3>
+            <p>공공데이터만으로는 혼잡도, 방문 후기, 현장 분위기 같은 실제 경험을 알기 어렵습니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🔗</div>
+            <h3>정보와 커뮤니티의 분리</h3>
+            <p>장소 정보와 사용자 게시글이 따로 존재하여 원하는 정보를 여러 서비스에서 찾아야 합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="users">
+        <div class="section-title">
+          <div>
+            <h2>주요 사용자</h2>
+            <p>부산에 사는 사람과 부산을 방문하는 사람을 동시에 고려합니다.</p>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <article class="card">
+            <div class="icon">🏠</div>
+            <h3>부산 지역 주민</h3>
+            <p>동네 추천, 지역 소식, 장소 변경 사항, 생활 정보, 현장 상황을 자유롭게 공유합니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🧳</div>
+            <h3>부산 관광객</h3>
+            <p>관광지·숙박·문화시설을 탐색하고, 방문 전 질문과 실제 이용 후기를 확인합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="data">
+        <div class="section-title">
+          <div>
+            <h2>보유 데이터 현황</h2>
+            <p>한국관광공사 TourAPI 4.0 기반 부산 데이터 2,289건</p>
+          </div>
+        </div>
+
+        <div class="grid grid-4">
+          <div class="metric"><strong>2,289</strong><span>전체 데이터</span></div>
+          <div class="metric"><strong>986</strong><span>쇼핑</span></div>
+          <div class="metric"><strong>351</strong><span>관광지</span></div>
+          <div class="metric"><strong>530</strong><span>음식점</span></div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:18px;">
+          <article class="card">
+            <h3>콘텐츠 유형별 데이터</h3>
+            <div class="bars" style="margin-top:18px;">
+              <div class="bar-row"><span>쇼핑</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><b>986</b></div>
+              <div class="bar-row"><span>음식점</span><div class="bar-track"><div class="bar-fill" style="width:54%"></div></div><b>530</b></div>
+              <div class="bar-row"><span>관광지</span><div class="bar-track"><div class="bar-fill" style="width:36%"></div></div><b>351</b></div>
+              <div class="bar-row"><span>숙박</span><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><b>140</b></div>
+              <div class="bar-row"><span>문화시설</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><b>123</b></div>
+              <div class="bar-row"><span>축제·행사</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div><b>72</b></div>
+              <div class="bar-row"><span>레포츠</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div><b>65</b></div>
+              <div class="bar-row"><span>여행코스</span><div class="bar-track"><div class="bar-fill" style="width:3%"></div></div><b>22</b></div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>실제 활용 가능한 필드</h3>
+            <table class="data-table" style="margin-top:12px;">
+              <thead><tr><th>필드</th><th>활용</th></tr></thead>
+              <tbody>
+                <tr><td>title</td><td>장소명, 게시글 관련 장소</td></tr>
+                <tr><td>addr1 / addr2</td><td>주소 및 지역 필터</td></tr>
+                <tr><td>mapx / mapy</td><td>지도 마커 표시</td></tr>
+                <tr><td>firstimage</td><td>장소 카드 이미지</td></tr>
+                <tr><td>contentid</td><td>장소와 게시글 연결 키</td></tr>
+                <tr><td>contenttypeid</td><td>관광지·숙박 등 카테고리</td></tr>
+              </tbody>
+            </table>
+            <p class="small" style="margin-top:12px;">
+              운영시간·축제 일정은 현재 공통 데이터에 없으므로 MVP 핵심 기능에서는 사용하지 않습니다.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="functions">
+        <div class="section-title">
+          <div>
+            <h2>핵심 기능</h2>
+            <p>커뮤니티를 중심으로 공공데이터·지도·통계를 연결합니다.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <article class="card">
+            <div class="icon">🗂️</div>
+            <h3>익명 커뮤니티</h3>
+            <p>회원가입 없이 게시글 목록·상세·작성·수정·삭제를 제공하고, 비밀번호로 수정·삭제 권한을 확인합니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">📍</div>
+            <h3>장소 연계 게시글</h3>
+            <p>게시글 작성 시 관련 장소를 선택하고, 장소 상세 화면에서 관련 후기·질문을 함께 확인합니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🤖</div>
+            <h3>지역정보 챗봇</h3>
+            <p>제공된 부산 공공데이터를 바탕으로 장소 검색과 추천 질문에 답하고, 데이터에 없는 내용은 없다고 안내합니다.</p>
+          </article>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:18px;">
+          <article class="card">
+            <h3>1순위 · 게시판 추가 기능</h3>
+            <p>검색, 조회수, 좋아요, 북마크, 태그를 적용하여 정보 소비와 참여를 강화합니다.</p>
+          </article>
+          <article class="card">
+            <h3>2순위 · 지도 시각화</h3>
+            <p>장소 좌표를 마커로 표시하고 카테고리별 필터와 관련 게시글 연결을 제공합니다.</p>
+          </article>
+          <article class="card">
+            <h3>3순위 · 데이터 대시보드</h3>
+            <p>카테고리별 장소 수와 게시글 현황을 시각화하여 서비스 내 정보 분포를 보여줍니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="flow">
+        <div class="section-title">
+          <div>
+            <h2>사용자 경험 흐름</h2>
+            <p>장소 탐색에서 커뮤니티 참여까지 하나의 흐름으로 연결합니다.</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><b>🔎</b>부산 정보 탐색</div>
+          <div class="flow-step"><b>📍</b>지도 위치 확인</div>
+          <div class="flow-step"><b>📝</b>관련 게시글 확인</div>
+          <div class="flow-step"><b>💬</b>후기·질문 작성</div>
+          <div class="flow-step"><b>❤️</b>좋아요·북마크</div>
+          <div class="flow-step"><b>🤖</b>챗봇 추가 탐색</div>
+        </div>
+      </section>
+
+      <section id="ui">
+        <div class="section-title">
+          <div>
+            <h2>UI 구상 예시</h2>
+            <p>최종 디자인이 아니라 팀원들과 구조를 확인하기 위한 시각화입니다.</p>
+          </div>
+        </div>
+
+        <div class="ui-shell">
+          <div class="browser-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="mock-header">
+            <strong>Busan LocalHub</strong>
+            <div class="mock-nav">
+              <span>홈</span><span>지역정보</span><span>지도</span><span>대시보드</span><span>커뮤니티</span>
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-hero">
+              <div>
+                <span class="tag">부산 지역 커뮤니티</span>
+                <h3 style="font-size:26px;margin:12px 0 8px;">장소 정보와 실제 후기를 함께 확인하세요</h3>
+                <p style="color:#667085;font-size:13px;">
+                  공공데이터로 장소를 찾고, 관련 질문과 후기를 익명으로 확인합니다.
+                </p>
+                <div class="post-list">
+                  <div class="post"><span><b>[질문]</b> 광안리 주말에 많이 붐비나요?</span><span>조회 24</span></div>
+                  <div class="post"><span><b>[후기]</b> 국립부산과학관 아이와 방문 후기</span><span>♥ 8</span></div>
+                  <div class="post"><span><b>[추천]</b> 해운대 근처 조용한 문화시설</span><span>조회 19</span></div>
+                </div>
+              </div>
+              <div class="mock-map">
+                <div class="pin a"></div>
+                <div class="pin b"></div>
+                <div class="pin c"></div>
+                <div class="chatbot">💬</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scope">
+        <div class="section-title">
+          <div>
+            <h2>MVP 범위</h2>
+            <p>3일 개발 기간을 고려해 핵심 범위를 명확히 제한합니다.</p>
+          </div>
+        </div>
+
+        <div class="moscow">
+          <article class="priority must">
+            <h3>Must Have</h3>
+            <ul>
+              <li>부산 데이터 기반 지역정보 제공</li>
+              <li>익명 게시판 CRUD 및 비밀번호 권한</li>
+              <li>OpenAI 기반 지역정보 챗봇</li>
+              <li>Vue.js 3 SPA 및 localStorage</li>
+              <li>Netlify 배포와 기능명세서·WBS</li>
+            </ul>
+          </article>
+          <article class="priority should">
+            <h3>Should Have</h3>
+            <ul>
+              <li>게시글 검색·조회수·좋아요</li>
+              <li>장소·게시글 연계 지도</li>
+              <li>장소·게시글 데이터 대시보드</li>
+            </ul>
+          </article>
+          <article class="priority wont">
+            <h3>Won't Have</h3>
+            <ul>
+              <li>회원가입·로그인</li>
+              <li>부산 외 4개 권역</li>
+              <li>경로 안내·날씨·실시간 알림</li>
+              <li>다국어·축제 캘린더</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="discussion">
+        <div class="section-title">
+          <div>
+            <h2>팀 회의에서 확정할 항목</h2>
+            <p>아래 항목에 합의하면 화면 설계와 역할 분담을 진행할 수 있습니다.</p>
+          </div>
+        </div>
+        <article class="card">
+          <div class="decision">
+            <strong>1. 게시글 카테고리</strong>
+            질문 / 후기 / 추천 / 지역소식 / 정보제보 중 어떤 항목을 사용할지 결정
+          </div>
+          <div class="decision">
+            <strong>2. 게시글과 장소 연결 방식</strong>
+            게시글 작성 시 관련 장소를 필수 또는 선택으로 지정할지 결정
+          </div>
+          <div class="decision">
+            <strong>3. 지도 표시 범위</strong>
+            관광지·음식점·문화시설 전체를 보여줄지, 핵심 카테고리만 보여줄지 결정
+          </div>
+          <div class="decision">
+            <strong>4. 대시보드 지표</strong>
+            카테고리별 장소 수 / 지역별 분포 / 게시글 수 / 좋아요 수 중 2개 정도 선정
+          </div>
+          <div class="decision">
+            <strong>5. 챗봇 답변 범위</strong>
+            공공데이터만 활용할지, localStorage 게시글 검색까지 포함할지 결정
+          </div>
+        </article>
+      </section>
+
+      <footer>
+        <strong>데이터 출처</strong><br>
+        한국관광공사 TourAPI 4.0 · 공공누리 제3유형<br>
+        본 문서는 팀 내부 아이디어 확인을 위한 기획 초안이며 기능 범위와 UI는 회의 결과에 따라 변경될 수 있습니다.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const links = [...document.querySelectorAll('nav a')];
+    const sections = links.map(link => document.querySelector(link.getAttribute('href')));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(link => link.classList.remove('active'));
+          const current = links.find(link => link.getAttribute('href') === '#' + entry.target.id);
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-35% 0px -55% 0px' });
+
+    sections.forEach(section => section && observer.observe(section));
+  </script>
+</body>
+</html>
