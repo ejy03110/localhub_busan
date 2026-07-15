@@ -1,39 +1,79 @@
 
+/*
+==========================================================
+게시판 기본 샘플 데이터
+
+게시글은 두 단계로 분류합니다.
+
+1. topic: 게시글의 큰 주제
+   - 관광
+   - 숙박
+   - 기타
+   - 자유
+
+2. postType: 선택한 주제 안에서 글의 성격
+   - 질문
+   - 후기
+   - 자유
+
+기본 비밀번호는 교육용 테스트를 위해 1234로 설정합니다.
+==========================================================
+*/
 const SAMPLE_POSTS = [
-  { id: 8, title: "주말에 가족과 걷기 좋은 해운대·동백섬 코스", 
-    content: "해운대역에서 시작해 동백섬과 해운대 해변 산책로를 걷는 코스입니다. \n오전 시간대가 비교적 여유롭습니다.", 
-    password: "1234", 
-    createdAt: "2026-07-14", 
-    category: "여행코스" 
+  {
+    id: 6,
+    title: "해운대 근처 가족 호텔 추천 부탁드립니다",
+    content: "아이와 함께 묵기 좋은 해운대 근처 숙소를 찾고 있습니다.",
+    password: "1234",
+    createdAt: "2026-07-14",
+    topic: "숙박",
+    postType: "질문"
   },
-  { id: 7, title: "남포동 근처 무료 전시 정보", 
-    content: "남포동과 영도 일대에서 무료로 관람할 수 있는 전시를 공유합니다.", 
-    password: "1234", 
-    createdAt: "2026-07-13", 
-    category: "문화시설" 
+  {
+    id: 5,
+    title: "광안리 숙소 1박 후기",
+    content: "광안리 바다 근처 숙소를 이용했는데 야경을 보기 좋았습니다.",
+    password: "1234",
+    createdAt: "2026-07-13",
+    topic: "숙박",
+    postType: "후기"
   },
-  { id: 6, title: "광안대교 야경 보기 좋은 시간과 위치", 
-    content: "노을 30분 전부터 광안리해수욕장에 도착하면 좋습니다.", 
-    password: "1234", 
-    createdAt: "2026-07-12", 
-    category: "관광지" 
+  {
+    id: 4,
+    title: "비 오는 날 갈 만한 부산 관광지 있나요?",
+    content: "실내에서 이용할 수 있는 부산 관광지를 추천받고 싶습니다.",
+    password: "1234",
+    createdAt: "2026-07-12",
+    topic: "관광",
+    postType: "질문"
   },
-  { id: 5, title: "서면 모범음식점 방문 후기", 
-    content: "공공데이터에 등록된 모범음식점 중 한 곳을 방문했습니다.", 
-    password: "1234", 
-    createdAt: "2026-07-11", 
-    category: "맛집" 
+  {
+    id: 3,
+    title: "감천문화마을 방문 후기",
+    content: "골목과 전망이 아름다웠지만 경사가 많아서 편한 신발이 필요합니다.",
+    password: "1234",
+    createdAt: "2026-07-11",
+    topic: "관광",
+    postType: "후기"
   },
-  { id: 4, title: "7월 부산 축제 일정 정리", 
-    content: "이번 달 주요 축제 일정을 날짜별로 정리했습니다.", 
-    password: "1234", 
-    createdAt: "2026-07-10", 
-    category: "축제" },
-  { id: 3, title: "비 오는 날 가기 좋은 부산 실내 명소", 
-    content: "국립해양박물관과 부산박물관을 추천합니다.", 
-    password: "1234", 
-    createdAt: "2026-07-09", 
-    category: "문화시설" }
+  {
+    id: 2,
+    title: "부산 여행 준비하면서 궁금한 점",
+    content: "부산 대중교통 이용 팁을 자유롭게 공유해주세요.",
+    password: "1234",
+    createdAt: "2026-07-10",
+    topic: "기타",
+    postType: "자유"
+  },
+  {
+    id: 1,
+    title: "부산 여행 자유 이야기",
+    content: "부산에서 좋았던 장소를 자유롭게 이야기해 주세요.",
+    password: "1234",
+    createdAt: "2026-07-09",
+    topic: "자유",
+    postType: "자유"
+  }
 ];
 
 function escapeHtml(value = "") {
@@ -42,14 +82,125 @@ function escapeHtml(value = "") {
   })[ch]);
 }
 
+/*
+==========================================================
+localStorage에서 게시글 목록을 가져오는 함수
+
+기존 게시글은 category 속성만 가지고 있을 수 있습니다.
+새 게시글은 topic과 postType을 사용하므로,
+오래된 데이터를 자동으로 새 구조로 변환합니다.
+==========================================================
+*/
 function getPosts() {
+  /*
+    localStorage에서 게시글 문자열을 가져옵니다.
+  */
   const raw = localStorage.getItem("localhub-mvp-posts");
+
+  /*
+    저장된 게시글이 하나도 없다면
+    SAMPLE_POSTS를 localStorage에 저장하고 반환합니다.
+  */
   if (!raw) {
-    localStorage.setItem("localhub-mvp-posts", JSON.stringify(SAMPLE_POSTS));
+    localStorage.setItem(
+      "localhub-mvp-posts",
+      JSON.stringify(SAMPLE_POSTS)
+    );
+
     return [...SAMPLE_POSTS];
   }
-  try { return JSON.parse(raw); }
-  catch { return [...SAMPLE_POSTS]; }
+
+  try {
+    /*
+      JSON 문자열을 실제 JavaScript 배열로 바꿉니다.
+    */
+    const posts = JSON.parse(raw);
+
+    /*
+      예전 게시글 데이터는 category만 가지고 있을 수 있습니다.
+
+      예전 구조:
+      {
+        category: "관광지"
+      }
+
+      새 구조:
+      {
+        topic: "관광",
+        postType: "자유"
+      }
+    */
+    const convertedPosts = posts.map(post => {
+      /*
+        이미 topic과 postType이 있다면
+        새 구조의 게시글이므로 그대로 반환합니다.
+      */
+      if (post.topic && post.postType) {
+        return post;
+      }
+
+      /*
+        기존 카테고리를 새 주제로 바꾸기 위한 기본값입니다.
+      */
+      let convertedTopic = "기타";
+
+      /*
+        관광지, 문화시설, 여행코스는
+        새 구조에서 관광 주제로 합칩니다.
+      */
+      if (
+        post.category === "관광지" ||
+        post.category === "문화시설" ||
+        post.category === "여행코스"
+      ) {
+        convertedTopic = "관광";
+      }
+
+      /*
+        기존 데이터에 숙박 또는 맛집이 있다면
+        임시로 숙박 주제로 변환합니다.
+
+        음식점 JSON은 사용하지 않지만,
+        예전 localStorage에 맛집 게시글이 남아 있을 수 있어
+        오류 방지를 위해 포함합니다.
+      */
+      if (
+        post.category === "숙박" ||
+        post.category === "맛집"
+      ) {
+        convertedTopic = "숙박";
+      }
+
+      /*
+        기존 데이터에는 글 성격 정보가 없으므로
+        기본 글 성격을 자유로 설정합니다.
+      */
+      return {
+        ...post,
+        topic: convertedTopic,
+        postType: "자유"
+      };
+    });
+
+    /*
+      변환된 데이터를 다시 저장해서
+      다음부터는 새 구조를 그대로 사용합니다.
+    */
+    savePosts(convertedPosts);
+
+    return convertedPosts;
+  } catch (error) {
+    /*
+      localStorage 데이터가 손상되어 JSON 변환이 실패하면
+      오류를 콘솔에 출력하고 샘플 데이터를 사용합니다.
+    */
+    console.error(
+      "게시글 데이터를 불러오지 못했습니다.",
+      error
+    );
+
+    return [...SAMPLE_POSTS];
+  }
 }
 
 function savePosts(posts) {
@@ -120,7 +271,7 @@ function renderRecent() {
         >
           <div class="community-card-content">
             <span class="community-category">
-              ${escapeHtml(post.category)}
+              ${escapeHtml(post.postType || post.topic || "기타")}
             </span>
 
             <h3>
@@ -222,47 +373,280 @@ async function renderFeaturedPlaces() {
   }
 }
 
+/*
+==========================================================
+게시판 목록 출력 및 검색 기능
+
+검색 기준
+1. 제목 검색
+2. 주제 필터: 관광 / 숙박 / 기타 / 자유
+3. 글 성격 필터: 질문 / 후기 / 자유
+
+board.html의 다음 요소와 연결됩니다.
+
+data-board-body
+data-board-search
+data-board-topic
+data-board-post-type
+data-board-search-button
+==========================================================
+*/
 function initBoard() {
-  const body = document.querySelector("[data-board-body]");
-  const search = document.querySelector("[data-board-search]");
-  const category = document.querySelector("[data-board-category]");
-  const button = document.querySelector("[data-board-search-button]");
+  /*
+    게시글 목록이 들어갈 tbody 요소입니다.
+  */
+  const body = document.querySelector(
+    "[data-board-body]"
+  );
+
+  /*
+    게시글 제목 검색 입력창입니다.
+  */
+  const search = document.querySelector(
+    "[data-board-search]"
+  );
+
+  /*
+    게시글의 큰 분류인 주제 선택창입니다.
+
+    관광 / 숙박 / 기타 / 자유
+  */
+  const topicSelect = document.querySelector(
+    "[data-board-topic]"
+  );
+
+  /*
+    선택한 주제 안에서 글의 성격을 구분하는 선택창입니다.
+
+    질문 / 후기 / 자유
+  */
+  const postTypeSelect = document.querySelector(
+    "[data-board-post-type]"
+  );
+
+  /*
+    검색 조건을 적용하는 버튼입니다.
+  */
+  const button = document.querySelector(
+    "[data-board-search-button]"
+  );
+
+  /*
+    현재 페이지에 게시글 목록 영역이 없다면
+    이 함수를 더 이상 실행하지 않습니다.
+
+    app.js는 여러 HTML에서 함께 사용하기 때문에
+    해당 요소가 없는 페이지에서는 안전하게 종료해야 합니다.
+  */
   if (!body) return;
 
+  /*
+    현재 검색 조건에 맞는 게시글을 찾아
+    게시판 표에 출력하는 함수입니다.
+  */
   const draw = () => {
-    const keyword = search.value.trim().toLowerCase();
-    const selected = category.value;
+    /*
+      제목 검색어를 읽습니다.
+
+      검색창이 없을 가능성까지 고려해
+      optional chaining과 기본값을 사용합니다.
+    */
+    const keyword = (
+      search?.value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+    /*
+      선택된 주제를 가져옵니다.
+
+      빈 값이면 전체 주제를 뜻합니다.
+    */
+    const selectedTopic =
+      topicSelect?.value || "";
+
+    /*
+      선택된 글 성격을 가져옵니다.
+
+      빈 값이면 전체 글 성격을 뜻합니다.
+    */
+    const selectedPostType =
+      postTypeSelect?.value || "";
+
+    /*
+      localStorage에서 게시글을 불러옵니다.
+    */
     const posts = getPosts()
       .slice()
-      .sort((a,b) => b.id - a.id)
-      .filter(post => (!keyword || post.title.toLowerCase().includes(keyword)) && (!selected || post.category === selected));
 
-    body.innerHTML = posts.length ? posts.map(post => `
-      <tr>
-        <td class="number-col">${post.id}</td>
-        <td><a class="post-title" href="post-detail.html?id=${post.id}">${escapeHtml(post.title)}</a><div class="post-meta">${escapeHtml(post.category)}</div></td>
-        <td class="date-col">${post.createdAt}</td>
-      </tr>
-    `).join("") : `<tr><td colspan="3">검색 결과가 없습니다.</td></tr>`;
+      /*
+        게시글 ID가 큰 최신 글이 위로 오도록 정렬합니다.
+      */
+      .sort((a, b) => b.id - a.id)
+
+      /*
+        제목, 주제, 글 성격 조건을 모두 검사합니다.
+      */
+      .filter(post => {
+        /*
+          검색어가 없거나,
+          게시글 제목에 검색어가 포함되면 통과합니다.
+        */
+        const matchesKeyword =
+          !keyword ||
+          post.title
+            .toLowerCase()
+            .includes(keyword);
+
+        /*
+          주제가 선택되지 않았거나,
+          게시글 주제가 선택한 값과 같으면 통과합니다.
+        */
+        const matchesTopic =
+          !selectedTopic ||
+          post.topic === selectedTopic;
+
+        /*
+          글 성격이 선택되지 않았거나,
+          게시글 성격이 선택한 값과 같으면 통과합니다.
+        */
+        const matchesPostType =
+          !selectedPostType ||
+          post.postType === selectedPostType;
+
+        return (
+          matchesKeyword &&
+          matchesTopic &&
+          matchesPostType
+        );
+      });
+
+    /*
+      검색 결과가 있으면 게시글 행을 출력하고,
+      없으면 검색 결과가 없다는 문구를 출력합니다.
+    */
+    body.innerHTML = posts.length
+      ? posts.map(post => `
+          <tr>
+            <!-- 게시글 번호 -->
+            <td class="number-col">
+              ${post.id}
+            </td>
+
+            <!-- 게시글의 큰 주제 -->
+            <td>
+              ${escapeHtml(post.topic || "기타")}
+            </td>
+
+            <!-- 주제 안에서의 글 성격 -->
+            <td>
+              ${escapeHtml(post.postType || "자유")}
+            </td>
+
+            <!-- 게시글 제목과 상세 페이지 링크 -->
+            <td>
+              <a
+                class="post-title"
+                href="post-detail.html?id=${post.id}"
+              >
+                ${escapeHtml(post.title)}
+              </a>
+            </td>
+
+            <!-- 게시글 작성일 -->
+            <td class="date-col">
+              ${post.createdAt}
+            </td>
+          </tr>
+        `).join("")
+      : `
+          <tr>
+            <td colspan="5">
+              검색 결과가 없습니다.
+            </td>
+          </tr>
+        `;
   };
 
+  /*
+    게시판 페이지를 처음 열었을 때
+    전체 게시글을 한 번 출력합니다.
+  */
   draw();
-  button?.addEventListener("click", draw);
-  category?.addEventListener("change", draw);
-  search?.addEventListener("keydown", event => { if (event.key === "Enter") draw(); });
+
+  /*
+    검색 버튼 클릭 시 필터를 적용합니다.
+  */
+  button?.addEventListener(
+    "click",
+    draw
+  );
+
+  /*
+    주제를 변경하면 바로 결과를 다시 출력합니다.
+  */
+  topicSelect?.addEventListener(
+    "change",
+    draw
+  );
+
+  /*
+    글 성격을 변경하면 바로 결과를 다시 출력합니다.
+  */
+  postTypeSelect?.addEventListener(
+    "change",
+    draw
+  );
+
+  /*
+    제목 검색창에서 Enter 키를 눌러도
+    검색 버튼과 동일하게 작동합니다.
+  */
+  search?.addEventListener(
+    "keydown",
+    event => {
+      if (event.key === "Enter") {
+        draw();
+      }
+    }
+  );
 }
 
 function initDetail() {
+  /*
+    게시글 상세 화면에 제목, 내용, 분류 정보, 작성일을 출력하는 함수입니다.
+
+    [연결되는 HTML 요소]
+    - data-detail-title
+    - data-detail-content
+    - data-detail-meta
+
+    [기능]
+    1. URL의 id로 게시글을 찾습니다.
+    2. 게시글이 없으면 안내 후 board.html로 이동합니다.
+    3. 제목과 내용을 화면에 출력합니다.
+    4. topic과 postType을 기준으로 분류 정보를 표시합니다.
+    5. 수정과 삭제 버튼 이벤트를 연결합니다.
+  */
   const title = document.querySelector("[data-detail-title]");
   const content = document.querySelector("[data-detail-content]");
   const meta = document.querySelector("[data-detail-meta]");
-  if (!title) return;
+
+  if (!title || !content || !meta) return;
 
   const posts = getPosts();
-  const post = posts.find(item => item.id === getId()) || posts[0];
+  const requestedId = getId();
+  const post = posts.find(item => item.id === requestedId);
+
+  if (!post) {
+    alert("게시글을 찾을 수 없습니다.");
+    location.href = "board.html";
+    return;
+  }
+
   title.textContent = post.title;
   content.textContent = post.content;
-  meta.textContent = `${post.category} · 작성일 ${post.createdAt}`;
+  meta.textContent = `${post.topic || "기타"} · ${post.postType || "자유"} · 작성일 ${post.createdAt}`;
 
   document.querySelector("[data-edit]")?.addEventListener("click", () => openPassword("edit", post));
   document.querySelector("[data-delete]")?.addEventListener("click", () => openPassword("delete", post));
@@ -299,52 +683,275 @@ function openPassword(mode, post) {
   };
 }
 
+/*
+==========================================================
+게시글 작성 및 수정 기능
+
+[이 함수가 담당하는 기능]
+
+1. 새 게시글 작성
+2. 기존 게시글 수정
+3. 주제 저장
+   - 관광
+   - 숙박
+   - 기타
+   - 자유
+4. 글 성격 저장
+   - 질문
+   - 후기
+   - 자유
+5. 제목, 내용, 비밀번호 검사
+6. localStorage에 게시글 저장
+7. 저장 후 게시판 목록으로 이동
+
+[작성 모드와 수정 모드 구분]
+
+post-write.html
+→ 새 게시글 작성
+
+post-write.html?id=3
+→ ID가 3인 게시글 수정
+==========================================================
+*/
 function initWrite() {
-  const form = document.querySelector("[data-post-form]");
+  /*
+    게시글 작성 폼을 찾습니다.
+
+    post-write.html에 있는
+    data-post-form 속성과 연결됩니다.
+  */
+  const form = document.querySelector(
+    "[data-post-form]"
+  );
+
+  /*
+    현재 페이지에 게시글 작성 폼이 없다면
+    이 함수를 실행하지 않고 종료합니다.
+
+    app.js는 여러 HTML 페이지에서 함께 사용하기 때문에
+    이러한 확인 과정이 필요합니다.
+  */
   if (!form) return;
 
-  const id = getId();
-  const title = document.querySelector("[data-post-title]");
-  const content = document.querySelector("[data-post-content]");
-  const password = document.querySelector("[data-post-password]");
-  const category = document.querySelector("[data-post-category]");
-  const heading = document.querySelector("[data-form-title]");
 
+  /*
+    주소에 포함된 게시글 ID를 가져옵니다.
+
+    예:
+    post-write.html?id=3
+
+    위 주소에서는 id 값이 3이 됩니다.
+
+    ID가 있으면 수정 모드,
+    ID가 없으면 새 글 작성 모드입니다.
+  */
+  const id = getId();
+
+
+  /*
+    게시글 입력 요소를 각각 찾습니다.
+  */
+
+  // 게시글 주제 선택창
+  const topic = document.querySelector(
+    "[data-post-topic]"
+  );
+
+  // 글 성격 선택창
+  const postType = document.querySelector(
+    "[data-post-type]"
+  );
+
+  // 제목 입력창
+  const title = document.querySelector(
+    "[data-post-title]"
+  );
+
+  // 내용 입력창
+  const content = document.querySelector(
+    "[data-post-content]"
+  );
+
+  // 수정·삭제용 비밀번호 입력창
+  const password = document.querySelector(
+    "[data-post-password]"
+  );
+
+  // 페이지 제목: 게시글 작성 또는 게시글 수정
+  const heading = document.querySelector(
+    "[data-form-title]"
+  );
+
+
+  /*
+    수정 모드 처리
+
+    주소에 게시글 ID가 있다면
+    기존 게시글을 찾아 입력창에 내용을 채웁니다.
+  */
   if (id) {
-    const post = getPosts().find(item => item.id === id);
+    const post = getPosts().find(
+      item => item.id === id
+    );
+
+    /*
+      해당 ID의 게시글을 찾은 경우에만
+      수정 화면을 구성합니다.
+    */
     if (post) {
       heading.textContent = "게시글 수정";
+
+      /*
+        기존 게시글 값을 각 입력창에 넣습니다.
+      */
+      topic.value = post.topic;
+      postType.value = post.postType;
       title.value = post.title;
       content.value = post.content;
       password.value = post.password;
-      category.value = post.category;
+    } else {
+      /*
+        존재하지 않는 게시글 ID로 접근한 경우
+        안내 후 게시판 목록으로 이동합니다.
+      */
+      alert("수정할 게시글을 찾을 수 없습니다.");
+      location.href = "board.html";
+      return;
     }
   }
 
+
+  /*
+    저장 버튼을 누르면 form의 submit 이벤트가 발생합니다.
+  */
   form.addEventListener("submit", event => {
+    /*
+      HTML 폼의 기본 제출 동작을 막습니다.
+
+      이 코드가 없으면 페이지가 새로고침되면서
+      JavaScript 저장 처리가 중단될 수 있습니다.
+    */
     event.preventDefault();
+
+
+    /*
+      사용자가 입력한 값을 하나의 객체로 정리합니다.
+
+      게시글의 큰 분류인 topic을 먼저 작성하고,
+      그 안의 글 성격인 postType을 다음에 작성합니다.
+    */
     const values = {
+      topic: topic.value,
+      postType: postType.value,
       title: title.value.trim(),
       content: content.value.trim(),
-      password: password.value.trim(),
-      category: category.value
+      password: password.value.trim()
     };
 
-    if (!values.title || !values.content || values.password.length < 4) {
-      alert("제목, 내용, 4자리 이상의 비밀번호를 입력하세요.");
+
+    /*
+      입력값 검사
+
+      제목과 내용은 반드시 입력해야 하며,
+      비밀번호는 4자리 이상이어야 합니다.
+    */
+    if (!values.title) {
+      alert("제목을 입력하세요.");
+      title.focus();
       return;
     }
 
-    const posts = getPosts();
-    if (id) {
-      const index = posts.findIndex(item => item.id === id);
-      posts[index] = { ...posts[index], ...values };
-    } else {
-      const nextId = posts.length ? Math.max(...posts.map(item => item.id)) + 1 : 1;
-      posts.push({ id: nextId, ...values, createdAt: new Date().toISOString().slice(0,10) });
+    if (!values.content) {
+      alert("내용을 입력하세요.");
+      content.focus();
+      return;
     }
+
+    if (values.password.length < 4) {
+      alert("비밀번호는 4자리 이상 입력하세요.");
+      password.focus();
+      return;
+    }
+
+
+    /*
+      현재 저장된 게시글 목록을 불러옵니다.
+    */
+    const posts = getPosts();
+
+
+    /*
+      ID가 있으면 기존 게시글 수정,
+      ID가 없으면 새 게시글 작성입니다.
+    */
+    if (id) {
+      /*
+        수정할 게시글의 배열 위치를 찾습니다.
+      */
+      const index = posts.findIndex(
+        item => item.id === id
+      );
+
+      if (index === -1) {
+        alert("수정할 게시글을 찾을 수 없습니다.");
+        return;
+      }
+
+      /*
+        기존 게시글의 ID와 작성일은 유지하면서
+        사용자가 수정한 값만 덮어씁니다.
+      */
+      posts[index] = {
+        ...posts[index],
+        ...values
+      };
+    } else {
+      /*
+        새 게시글 ID 생성
+
+        현재 가장 큰 ID에 1을 더합니다.
+        게시글이 하나도 없다면 1부터 시작합니다.
+      */
+      const nextId = posts.length
+        ? Math.max(...posts.map(post => post.id)) + 1
+        : 1;
+
+      /*
+        새 게시글을 게시글 배열에 추가합니다.
+      */
+      posts.push({
+        id: nextId,
+        ...values,
+
+        /*
+          현재 날짜를 YYYY-MM-DD 형식으로 저장합니다.
+        */
+        createdAt: new Date()
+          .toISOString()
+          .slice(0, 10)
+      });
+    }
+
+
+    /*
+      변경된 게시글 목록을 localStorage에 저장합니다.
+    */
     savePosts(posts);
-    alert(id ? "게시글이 수정되었습니다." : "게시글이 등록되었습니다.");
+
+
+    /*
+      작성 또는 수정 완료 안내를 표시합니다.
+    */
+    alert(
+      id
+        ? "게시글이 수정되었습니다."
+        : "게시글이 등록되었습니다."
+    );
+
+
+    /*
+      저장이 완료되면 게시판 목록으로 이동합니다.
+    */
     location.href = "board.html";
   });
 }
@@ -360,6 +967,195 @@ function initMapFilters() {
   }));
 }
 
+// 카테고리 매핑 (텍스트 → contenttypeid)
+const CATEGORY_MAP = {
+  "관광지": "12",
+  "문화시설": "14",
+  "축제": "15",
+  "맛집": "39",
+  "레포츠": "28",
+  "쇼핑": "38",
+  "숙박": "32"
+};
+
+// 부산 지도 초기화
+let exploreMap = null;
+let markers = [];
+
+function initExploreMap() {
+  if (exploreMap) return; // 이미 초기화됨
+  
+  // 부산 중심 좌표 (위도, 경도)
+  const busanCenter = [35.1796, 129.0756];
+  
+  exploreMap = L.map('explore-map').setView(busanCenter, 12);
+  
+  // OpenStreetMap 타일 추가
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(exploreMap);
+}
+
+function renderMapMarkers(places) {
+
+  // 기존 마커 제거
+  markers.forEach(marker => exploreMap.removeLayer(marker));
+  markers = [];
+
+  // 새 마커 추가
+  places.forEach(place => {
+    const lat = parseFloat(place.mapy);
+    const lon = parseFloat(place.mapx);
+    
+    if (isNaN(lat) || isNaN(lon)) return; // 좌표 없으면 건너뛰기
+    
+    const marker = L.marker([lat, lon])
+  .bindPopup(`
+    <div style="font-size: 14px; width: 220px;">
+      ${place.firstimage ? `<img src="${place.firstimage}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : '<div style="width:100%; height:120px; background:#e0e0e0; border-radius:8px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">이미지 없음</div>'}
+      <strong>${escapeHtml(place.title)}</strong><br>
+      <small>${escapeHtml(place.addr1)}</small>
+      ${place.tel ? `<br><small style="color:#666;">☎ ${escapeHtml(place.tel)}</small>` : ''}
+    </div>
+  `)
+  .addTo(exploreMap);
+    
+    markers.push(marker);
+  });
+
+  // 마커들이 보이도록 지도 줌 조정
+  if (places.length > 0) {
+    const group = new L.featureGroup(markers);
+    exploreMap.fitBounds(group.getBounds().pad(0.1));
+  }
+}
+
+// ===== EXPLORE 기능 =====
+async function loadAllPlaces() {
+  try {
+    const files = [
+      'data/부산_관광지.json',
+      'data/부산_문화시설.json',
+      'data/부산_레포츠.json',
+      'data/부산_쇼핑.json',
+      'data/부산_숙박.json',
+      'data/부산_여행코스.json',
+      'data/부산_축제공연행사.json'
+    ];
+
+    let allPlaces = [];
+    for (const file of files) {
+      const response = await fetch(file);
+      const data = await response.json();
+      allPlaces = allPlaces.concat(data.items);
+    }
+    return allPlaces;
+  } catch (error) {
+    console.error("JSON 로딩 오류:", error);
+    return [];
+  }
+}
+
+
+// 지역 매핑 (드롭다운 선택값 → 주소에서 찾을 구명)
+const REGION_MAP = {
+  "부산 전체": null,
+  "서면구": "부산진구", 
+  "수영구": "수영구",
+  "해운대구": "해운대구",
+  "영도구": "영도구"
+};
+
+// 주소에서 구(district) 추출
+function extractDistrictFromAddr(addr1) {
+  const match = addr1.match(/부산(?:광역시)?\s+(\S+구)/);
+  return match ? match[1] : null;
+}
+
+async function initExplore() {
+  const filterBtn = document.querySelector(".filter-panel .btn-primary");
+  const checkboxes = document.querySelectorAll("[data-map-filter]");
+  const searchInput = document.querySelector(".filter-panel .input");
+  const regionSelect = document.querySelector(".filter-panel select");
+  const mapInfo = document.querySelector("[data-map-info]");
+  const resetBtn = document.getElementById("reset-filter");
+  
+  if (!filterBtn) return;
+  
+  // 초기 지도 표시
+  try {
+    if (!exploreMap) {
+      initExploreMap();
+      const allPlaces = await loadAllPlaces();
+      if (allPlaces.length > 0) {
+        renderMapMarkers(allPlaces.slice(0, 50));
+      }
+    }
+  } catch (e) {
+    console.error("지도 초기화 오류:", e);
+  }
+  
+  // 필터링 함수 정의
+  const applyFilter = async () => {
+    const selectedCategories = [...checkboxes]
+      .filter(cb => cb.checked)
+      .map(cb => CATEGORY_MAP[cb.value]);
+
+    const searchKeyword = searchInput.value.trim();
+    const selectedRegion = regionSelect?.value;
+    const targetDistrict = REGION_MAP[selectedRegion];
+    
+    const allPlaces = await loadAllPlaces();
+
+    const filtered = allPlaces.filter(place => {
+      const matchesCategory = selectedCategories.includes(place.contenttypeid);
+      const matchesSearch = !searchKeyword || place.title.includes(searchKeyword);
+      
+      // 지역 필터링
+      let matchesRegion = true;
+      if (targetDistrict) {
+        const district = extractDistrictFromAddr(place.addr1);
+        matchesRegion = district === targetDistrict;
+      }
+      
+      return matchesCategory && matchesSearch && matchesRegion;
+    });
+
+    if (!exploreMap) initExploreMap();
+    renderMapMarkers(filtered);
+
+    mapInfo.textContent = filtered.length 
+      ? `${filtered.length}개의 장소를 찾았습니다.` 
+      : "검색 결과가 없습니다.";
+  };
+
+  // 필터 버튼 클릭 이벤트
+  filterBtn.addEventListener("click", applyFilter);
+
+  // Enter 키 지원
+  searchInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      applyFilter();
+    }
+  });
+
+  // 지역 드롭다운 변경 이벤트
+  regionSelect?.addEventListener("change", applyFilter);
+
+  // 초기화 버튼 이벤트
+  if (resetBtn) {
+    resetBtn.addEventListener("click", async () => {
+      checkboxes.forEach(cb => cb.checked = true);
+      searchInput.value = "";
+      regionSelect.value = "부산 전체";
+      await applyFilter();
+    });
+  }
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   initChat();
   renderRecent();
@@ -368,4 +1164,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initDetail();
   initWrite();
   initMapFilters();
+  initExplore(); 
 });

@@ -2,79 +2,516 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--
+    모바일 기기에서도 화면 크기에 맞춰
+    반응형으로 표시하기 위한 기본 설정입니다.
+  -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
   <title>부산 커뮤니티 | LocalHub</title>
-  <link rel="stylesheet" href="assets/styles.css">
+
+  <!--
+    프로젝트 전체의 공통 디자인을 불러옵니다.
+  -->
+  <link
+    rel="stylesheet"
+    href="assets/styles.css"
+  >
 </head>
+
 <body>
 
-<a class="skip-link" href="#main">본문 바로가기</a>
+<!--
+  키보드 사용자와 스크린리더 사용자가
+  본문으로 바로 이동할 수 있도록 만든 접근성 링크입니다.
+-->
+<a
+  class="skip-link"
+  href="#main"
+>
+  본문 바로가기
+</a>
+
+
+<!-- =========================================================
+     공통 상단 헤더
+     ========================================================= -->
 <header class="app-header">
   <div class="header-inner">
-    <a class="logo" href="index.html"><span class="logo-mark">L</span><span>LocalHub</span></a>
-    <nav class="main-nav" aria-label="주요 메뉴">
-      <a class="nav-link" href="index.html">홈</a>
-      <a class="nav-link" href="explore.html">지역 탐색</a>
-      <a class="nav-link" href="board.html">커뮤니티</a>
+
+    <!--
+      LocalHub 로고입니다.
+      클릭하면 index.html로 이동합니다.
+    -->
+    <a
+      class="logo"
+      href="index.html"
+    >
+      <span class="logo-mark">L</span>
+      <span>LocalHub</span>
+    </a>
+
+
+    <!--
+      프로젝트 주요 메뉴입니다.
+
+      축제 캘린더는 제외하기로 했으므로
+      festival.html 링크는 넣지 않습니다.
+    -->
+    <nav
+      class="main-nav"
+      aria-label="주요 메뉴"
+    >
+      <a
+        class="nav-link"
+        href="index.html"
+      >
+        홈
+      </a>
+
+      <a
+        class="nav-link"
+        href="explore.html"
+      >
+        지역 탐색
+      </a>
+
+      <!--
+        현재 페이지가 커뮤니티이므로
+        active 클래스를 붙여 강조합니다.
+      -->
+      <a
+        class="nav-link active"
+        href="board.html"
+      >
+        커뮤니티
+      </a>
     </nav>
+
+
+    <!--
+      오른쪽 상단 기능 버튼 영역입니다.
+    -->
     <div class="header-actions">
-      <button class="icon-btn" type="button" data-chat-toggle aria-label="챗봇 열기">💬</button>
-      <button class="icon-btn mobile-nav-button" type="button" aria-label="메뉴">☰</button>
+
+      <!-- 챗봇 열기 버튼 -->
+      <button
+        class="icon-btn"
+        type="button"
+        data-chat-toggle
+        aria-label="챗봇 열기"
+      >
+        💬
+      </button>
+
+      <!--
+        모바일 화면용 메뉴 버튼입니다.
+        현재는 UI만 있고 실제 동작은 추후 추가할 수 있습니다.
+      -->
+      <button
+        class="icon-btn mobile-nav-button"
+        type="button"
+        aria-label="메뉴"
+      >
+        ☰
+      </button>
+
     </div>
   </div>
 </header>
 
 
-<main class="page" id="main">
-  <div class="breadcrumb">홈 &gt; 부산 &gt; 커뮤니티</div>
-  <div class="page-heading">
-    <div><h1>부산 커뮤니티</h1><p>로그인 없이 지역 정보를 자유롭게 공유하는 익명 게시판입니다.</p></div>
-    <a class="btn btn-primary" href="post-write.html">+ 글쓰기</a>
+<!-- =========================================================
+     게시판 본문 영역
+     ========================================================= -->
+<main
+  class="page"
+  id="main"
+>
+
+  <!-- 현재 페이지 위치 표시 -->
+  <div class="breadcrumb">
+    홈 &gt; 부산 &gt; 커뮤니티
   </div>
-  <div class="notice">게시글은 현재 브라우저의 localStorage에만 저장됩니다. 다른 기기나 사용자와 실제로 공유되지는 않습니다.</div>
+
+
+  <!--
+    게시판 제목과 글쓰기 버튼 영역입니다.
+  -->
+  <div class="page-heading">
+
+    <div>
+      <h1>부산 커뮤니티</h1>
+
+      <p>
+        부산 관광, 숙박, 기타 주제별로
+        질문과 후기를 나누는 익명 게시판입니다.
+      </p>
+    </div>
+
+    <!--
+      클릭하면 게시글 작성 페이지로 이동합니다.
+    -->
+    <a
+      class="btn btn-primary"
+      href="post-write.html"
+    >
+      + 글쓰기
+    </a>
+
+  </div>
+
+
+  <!--
+    이 프로젝트의 게시글이 localStorage에만
+    저장된다는 점을 안내합니다.
+  -->
+  <div class="notice">
+    게시글은 현재 브라우저의 localStorage에만 저장됩니다.
+    다른 기기나 사용자와 실제로 공유되지는 않습니다.
+  </div>
+
+
+  <!-- =======================================================
+       게시판 목록 패널
+       ======================================================= -->
   <section class="panel">
-    <div class="toolbar">
-      <input class="input" data-board-search placeholder="게시글 제목 검색">
-      <select data-board-category>
-        <option value="">전체 카테고리</option>
-        <option>관광지</option><option>문화시설</option><option>축제</option><option>맛집</option><option>여행코스</option>
+
+    <!--
+      ==========================================================
+      게시판 검색 및 필터 영역
+
+      분류 순서
+      1. 주제: 관광 / 숙박 / 기타 / 자유
+      2. 글 성격: 질문 / 후기 / 자유
+
+      즉, 먼저 어떤 주제의 글을 볼지 선택하고
+      그 주제 안에서 질문·후기·자유글을 다시 구분합니다.
+      ==========================================================
+    -->
+    <div class="toolbar board-filter-toolbar">
+
+      <!--
+        게시글 제목을 검색하는 입력창입니다.
+      -->
+      <input
+        class="input"
+        type="search"
+        data-board-search
+        placeholder="게시글 제목 검색"
+        aria-label="게시글 제목 검색"
+      >
+
+
+      <!--
+        게시글의 가장 큰 분류인 주제를 선택합니다.
+
+        관광: 관광지, 명소, 여행지 관련 글
+        숙박: 호텔, 펜션, 게스트하우스 등 숙소 관련 글
+        기타: 교통, 쇼핑, 레포츠 등 다른 주제
+        자유: 특정 주제가 없는 자유로운 글
+
+        빈 값("")은 모든 주제의 게시글을 표시합니다.
+      -->
+      <select
+        data-board-topic
+        aria-label="게시글 주제 선택"
+      >
+        <option value="">
+          전체 주제
+        </option>
+
+        <option value="관광">
+          관광
+        </option>
+
+        <option value="숙박">
+          숙박
+        </option>
+
+        <option value="기타">
+          기타
+        </option>
+
+        <option value="자유">
+          자유
+        </option>
       </select>
-      <button class="btn btn-ghost" type="button" data-board-search-button>검색</button>
+
+
+      <!--
+        선택한 주제 안에서 글의 성격을 구분합니다.
+
+        질문: 정보나 추천을 요청하는 글
+        후기: 방문하거나 이용한 경험을 공유하는 글
+        자유: 질문이나 후기에 해당하지 않는 일반 글
+
+        빈 값("")은 모든 글 성격을 표시합니다.
+      -->
+      <select
+        data-board-post-type
+        aria-label="글 성격 선택"
+      >
+        <option value="">
+          전체 글 성격
+        </option>
+
+        <option value="질문">
+          질문
+        </option>
+
+        <option value="후기">
+          후기
+        </option>
+
+        <option value="자유">
+          자유
+        </option>
+      </select>
+
+
+      <!--
+        현재 입력된 검색 조건을 적용하는 버튼입니다.
+      -->
+      <button
+        class="btn btn-ghost"
+        type="button"
+        data-board-search-button
+      >
+        검색
+      </button>
+
     </div>
-    <table class="board-table">
-      <thead><tr><th>번호</th><th>제목</th><th>작성일</th></tr></thead>
-      <tbody data-board-body></tbody>
-    </table>
+
+
+    <!--
+      표가 모바일 화면을 넘어갈 때
+      가로 스크롤이 가능하도록 감싸는 영역입니다.
+    -->
+    <div class="board-table-wrapper">
+
+      <!-- =====================================================
+           게시글 목록 표
+           ===================================================== -->
+      <table class="board-table">
+
+        <!--
+          각 게시글의 표시 항목입니다.
+
+          분류 구조에 맞춰
+          주제를 먼저 보여주고 글 성격을 다음에 표시합니다.
+
+          번호 / 주제 / 글 성격 / 제목 / 작성일
+        -->
+        <thead>
+          <tr>
+            <th scope="col">
+              번호
+            </th>
+
+            <th scope="col">
+              주제
+            </th>
+
+            <th scope="col">
+              글 성격
+            </th>
+
+            <th scope="col">
+              제목
+            </th>
+
+            <th scope="col">
+              작성일
+            </th>
+          </tr>
+        </thead>
+
+
+        <!--
+          실제 게시글 목록이 들어가는 영역입니다.
+
+          assets/app.js의 initBoard() 함수가
+          이 tbody를 찾아 게시글 행을 자동으로 추가합니다.
+
+          app.js에서도 출력 순서를
+          주제 → 글 성격 순서로 맞춰야 합니다.
+        -->
+        <tbody data-board-body>
+          <!-- JavaScript가 게시글을 이곳에 출력합니다. -->
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!--
+      페이지네이션 UI입니다.
+
+      현재는 정적 화면이며,
+      실제 페이지 이동 기능은 추후 JavaScript로 추가할 수 있습니다.
+    -->
     <div class="pagination">
-      <button class="page-button">‹</button><button class="page-button active">1</button><button class="page-button">2</button><button class="page-button">›</button>
+
+      <button
+        class="page-button"
+        type="button"
+        aria-label="이전 페이지"
+      >
+        ‹
+      </button>
+
+      <button
+        class="page-button active"
+        type="button"
+        aria-current="page"
+      >
+        1
+      </button>
+
+      <button
+        class="page-button"
+        type="button"
+      >
+        2
+      </button>
+
+      <button
+        class="page-button"
+        type="button"
+        aria-label="다음 페이지"
+      >
+        ›
+      </button>
+
     </div>
+
   </section>
+
 </main>
 
 
-<button class="chat-fab" type="button" data-chat-toggle aria-label="LocalHub 챗봇 열기">💬</button>
-<section class="chat-panel" data-chat-panel aria-label="LocalHub 챗봇">
+<!-- =========================================================
+     오른쪽 아래 플로팅 챗봇 버튼
+     ========================================================= -->
+
+<!--
+  화면 오른쪽 아래에 고정되는 챗봇 버튼입니다.
+
+  data-chat-toggle 속성을 app.js에서 찾아
+  챗봇 패널을 열고 닫는 기능을 연결합니다.
+-->
+<button
+  class="chat-fab"
+  type="button"
+  data-chat-toggle
+  aria-label="LocalHub 챗봇 열기"
+>
+  💬
+</button>
+
+
+<!-- =========================================================
+     챗봇 패널
+     ========================================================= -->
+<section
+  class="chat-panel"
+  data-chat-panel
+  aria-label="LocalHub 챗봇"
+>
+
+  <!-- 챗봇 상단 제목 -->
   <header class="chat-head">
-    <div><h3>LocalHub 챗</h3><small>부산 지역 정보 도우미</small></div>
-    <button class="chat-close" type="button" data-chat-close aria-label="닫기">×</button>
+
+    <div>
+      <h3>LocalHub 챗</h3>
+      <small>부산 지역 정보 도우미</small>
+    </div>
+
+    <!-- 챗봇 닫기 버튼 -->
+    <button
+      class="chat-close"
+      type="button"
+      data-chat-close
+      aria-label="닫기"
+    >
+      ×
+    </button>
+
   </header>
-  <div class="chat-body" data-chat-body>
-    <div class="message bot">안녕하세요. 관광지, 축제, 맛집, 여행 코스 또는 커뮤니티 게시글을 질문해 주세요.</div>
+
+
+  <!-- 대화 메시지가 표시되는 영역 -->
+  <div
+    class="chat-body"
+    data-chat-body
+  >
+
+    <!-- 챗봇의 첫 안내 문구 -->
+    <div class="message bot">
+      안녕하세요. 부산 관광지, 숙박 정보 또는
+      커뮤니티 게시글을 질문해 주세요.
+    </div>
+
   </div>
-  <form class="chat-input" data-chat-form>
-    <input class="input" data-chat-input placeholder="예: 이번 주말 부산 축제 알려줘" />
-    <button class="btn btn-primary" type="submit">전송</button>
+
+
+  <!-- 챗봇 질문 입력 폼 -->
+  <form
+    class="chat-input"
+    data-chat-form
+  >
+
+    <input
+      class="input"
+      type="text"
+      data-chat-input
+      placeholder="예: 해운대 근처 숙소 추천해줘"
+      aria-label="챗봇 질문 입력"
+    >
+
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      전송
+    </button>
+
   </form>
+
 </section>
 
 
+<!-- =========================================================
+     공통 푸터
+     ========================================================= -->
 <footer class="app-footer">
+
   <div class="footer-inner">
-    <span>© 2026 LocalHub · 부산 지역 정보 공유 커뮤니티</span>
-    <span>공공데이터 기반 교육용 SPA 프로토타입</span>
+
+    <span>
+      © 2026 LocalHub · 부산 지역 정보 공유 커뮤니티
+    </span>
+
+    <span>
+      공공데이터 기반 교육용 SPA 프로토타입
+    </span>
+
   </div>
+
 </footer>
 
+
+<!--
+  게시판 목록, 검색, 글쓰기, 상세, 수정, 삭제,
+  챗봇 동작을 담당하는 JavaScript 파일입니다.
+-->
 <script src="assets/app.js"></script>
+
 </body>
 </html>
