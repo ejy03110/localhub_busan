@@ -1,0 +1,6 @@
+<script setup>
+import { ref, computed } from 'vue'; import { getPosts } from '../services/postService.js'
+const posts=ref(getPosts()), keyword=ref(''), category=ref('')
+const filtered=computed(()=>posts.value.filter(p=>(!category.value||p.category===category.value)&&(!keyword.value||p.title.toLowerCase().includes(keyword.value.toLowerCase()))))
+</script>
+<template><div class="page"><div class="page-heading"><div><div class="breadcrumb">홈 &gt; 커뮤니티</div><h1>부산 커뮤니티</h1><p>로그인 없이 지역 정보를 공유하는 익명 게시판입니다.</p></div><RouterLink class="btn primary" to="/board/write">+ 글쓰기</RouterLink></div><div class="notice">게시글은 현재 브라우저의 localStorage에만 저장되며 다른 사용자와 공유되지 않습니다.</div><div class="toolbar"><input v-model="keyword" placeholder="제목 검색"><select v-model="category"><option value="">전체 카테고리</option><option>관광지</option><option>문화시설</option><option>레포츠</option><option>숙박</option><option>쇼핑</option><option>여행코스</option><option>축제·행사</option></select><strong>{{filtered.length}}건</strong></div><div class="board-list"><RouterLink v-for="p in filtered" :key="p.id" :to="`/board/${p.id}`" class="board-row"><span class="board-number">{{p.id}}</span><span><strong>{{p.title}}</strong><small>{{p.category}}</small></span><time>{{p.createdAt}}</time></RouterLink><p v-if="!filtered.length" class="empty">검색 결과가 없습니다.</p></div></div></template>
