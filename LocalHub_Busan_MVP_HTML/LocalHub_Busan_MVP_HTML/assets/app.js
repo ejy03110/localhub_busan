@@ -299,6 +299,20 @@ function renderRecent() {
     .join("");
 }
 
+function initMobileMenu() {
+  const menuButton = document.querySelector(".mobile-nav-button");
+  const mainNav = document.querySelector(".main-nav");
+
+  if (!menuButton || !mainNav) return;
+
+  menuButton.addEventListener("click", () => {
+    mainNav.classList.toggle("open");
+
+    const isOpen = mainNav.classList.contains("open");
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+  });
+}
+
 // =========================================================
 // 메인 화면 통계 카드에 실제 JSON 개수를 표시
 // =========================================================
@@ -338,7 +352,7 @@ async function renderFeaturedPlaces() {
     const response = await fetch("data/부산_관광지.json");
 
     if (!response.ok) {
-      throw new Error("추천 장소 데이터를 불러오지 못했습니다.");
+      throw new Error("추천 관광지 데이터를 불러오지 못했습니다.");
     }
 
     const data = await response.json();
@@ -398,7 +412,7 @@ async function renderFeaturedPlaces() {
 
     target.innerHTML = `
       <p class="notice">
-        추천 장소를 불러오지 못했습니다.
+        추천 관광지를 불러오지 못했습니다.
       </p>
     `;
   }
@@ -1370,4 +1384,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initWrite();
   initMapFilters();
   initExplore(); 
+  initMobileMenu();
 });

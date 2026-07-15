@@ -1207,14 +1207,56 @@ textarea {
 
 /* 태블릿 이하 화면에서 메뉴와 그리드 구조를 단순화 */
 @media (max-width: 1000px) {
-  .main-nav { display: none; }
-  .mobile-nav-button { display: grid; }
-  .hero { grid-template-columns: 1fr; }
-  .hero-visual { min-height: 380px; }
-  .stat-grid, .category-grid { grid-template-columns: repeat(2, 1fr); }
-  .two-col { grid-template-columns: 1fr; }
-  .explore-layout { grid-template-columns: 1fr; }
-  .filter-panel { position: static; }
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 14px 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 10px 24px rgba(31, 56, 88, 0.08);
+  }
+
+  /* 햄버거 버튼 클릭 시 JS가 open 클래스를 붙입니다. */
+  .main-nav.open {
+    display: flex;
+  }
+
+  .mobile-nav-button {
+    display: grid;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-visual {
+    min-height: 380px;
+  }
+
+  .stat-grid,
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .explore-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-panel {
+    position: static;
+  }
 }
 
 /* 모바일 화면에서 여백, 글자 크기, 표, 캘린더, 챗봇을 최적화 */
@@ -1510,7 +1552,7 @@ textarea {
 
 
 /* =========================================================
-   추천 장소 카드 마감
+   추천 관광지 카드 마감
    ========================================================= */
 
 .place-card {
