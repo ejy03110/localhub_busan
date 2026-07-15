@@ -618,6 +618,24 @@ button { cursor: pointer; }
   .weather-main { font-size: 36px; }
 }
 
+/* 날씨 아이콘과 온도를 가로로 정렬 */
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 날씨 아이콘 크기 */
+[data-weather-icon] {
+  font-size: 42px;
+  line-height: 1;
+}
+
+/* 현재 온도 */
+[data-weather-temperature] {
+  font-size: 42px;
+  font-weight: 900;
+}
 /* =========================================================
    10. 서브 페이지 공통 제목 및 검색 도구
    - 경로 표시, 페이지 제목, 검색·카테고리 필터

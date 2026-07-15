@@ -425,8 +425,20 @@ async function renderWeather() {
     "[data-weather-wind]"
   );
 
+  const highTarget = document.querySelector(
+    "[data-weather-high]"
+  );
+
+  const lowTarget = document.querySelector(
+    "[data-weather-low]"
+  );
+
   // 날씨 카드가 없는 페이지에서는 실행하지 않습니다.
   if (!temperatureTarget) return;
+
+  const iconTarget = document.querySelector(
+    "[data-weather-icon]"
+  );  
 
   const latitude = 35.1796;
   const longitude = 129.0756;
@@ -435,7 +447,8 @@ async function renderWeather() {
     "https://api.open-meteo.com/v1/forecast" +
     `?latitude=${latitude}` +
     `&longitude=${longitude}` +
-    "&current=temperature_2m,precipitation,weather_code,wind_speed_10m" +
+    "&current=temperature_2m,precipitation,weather_code,wind_speed_10m"
+    + "&daily=temperature_2m_max,temperature_2m_min"
     "&timezone=Asia%2FSeoul";
 
   try {
@@ -454,11 +467,20 @@ async function renderWeather() {
     descriptionTarget.textContent =
       getWeatherDescription(current.weather_code);
 
+    iconTarget.textContent = 
+    getWeatherIcon(current.weather_code);
+
     rainTarget.textContent =
-      `강수 ${current.precipitation}mm`;
+      `🌧️강수 ${current.precipitation}mm`;
 
     windTarget.textContent =
-      `바람 ${current.wind_speed_10m}km/h`;
+      `💨바람 ${current.wind_speed_10m}km/h`;
+
+    highTarget.textContent =
+      `🔥최고: ${Math.round(data.daily.temperature_2m_max[0])}°`;
+
+    lowTarget.textContent =
+      `❄️최저: ${Math.round(data.daily.temperature_2m_min[0])}°`;
 
   } catch (error) {
     console.error("날씨 데이터 로딩 실패:", error);
@@ -510,6 +532,50 @@ function getWeatherDescription(code) {
 
   return "날씨 정보 확인 중";
 }
+
+// 날씨 코드에 따라 아이콘을 반환합니다.
+function getWeatherIcon(code) {
+  if (code === 0) return "☀️";
+
+  if (code === 1 || code === 2) {
+    return "🌤️";
+  }
+
+  if (code === 3) {
+    return "☁️";
+  }
+
+  if (code === 45 || code === 48) {
+    return "🌫️";
+  }
+
+  if (
+    [51, 53, 55, 56, 57].includes(code)
+  ) {
+    return "🌦️";
+  }
+
+  if (
+    [61, 63, 65, 66, 67, 80, 81, 82].includes(code)
+  ) {
+    return "🌧️";
+  }
+
+  if (
+    [71, 73, 75, 77, 85, 86].includes(code)
+  ) {
+    return "❄️";
+  }
+
+  if (
+    [95, 96, 99].includes(code)
+  ) {
+    return "⛈️";
+  }
+
+  return "🌤️";
+}
+
 /*
 ==========================================================
 게시판 목록 출력 및 검색 기능

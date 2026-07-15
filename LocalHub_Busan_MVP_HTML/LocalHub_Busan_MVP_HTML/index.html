@@ -141,8 +141,9 @@
   <section class="weather-card">
     <small>부산 현재 날씨</small>
 
-    <div class="weather-main" data-weather-temperature>
-      --°
+    <div class="weather-main">
+      <span data-weather-icon>🌤️</span>
+      <span data-weather-temperature>--°</span>
     </div>
 
     <strong data-weather-description>
@@ -150,8 +151,13 @@
     </strong>
 
     <div class="weather-row">
-      <span data-weather-rain>강수 --mm</span>
-      <span data-weather-wind>바람 --km/h</span>
+      <span data-weather-high>🔥최고: --°</span>
+      <span data-weather-low>❄️최저: --°</span>
+    </div>
+
+    <div class="weather-row">
+      <span data-weather-rain>🌧️강수 --mm</span>
+      <span data-weather-wind>💨바람 --km/h</span>
     </div>
   </section>
 
