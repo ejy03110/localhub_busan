@@ -345,6 +345,7 @@ async function renderFeaturedPlaces() {
 
     const places = (data.items || [])
       .filter(place => place.firstimage || place.firstimage2)
+      .sort(() => Math.random() - 0.5)
       .slice(0, 4);
 
     target.innerHTML = places.map(place => {
