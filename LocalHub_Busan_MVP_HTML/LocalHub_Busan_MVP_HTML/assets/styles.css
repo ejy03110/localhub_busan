@@ -165,6 +165,65 @@ button { cursor: pointer; }
   place-items: center;
 }
 
+/* =========================================================
+   헤더 마감
+   ========================================================= */
+
+.app-header {
+  box-shadow: 0 6px 18px rgba(23, 50, 77, 0.06);
+}
+
+.header-inner {
+  min-height: 76px;
+}
+
+.logo {
+  font-size: 23px;
+  letter-spacing: -0.5px;
+}
+
+.logo-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.22);
+}
+
+.main-nav {
+  gap: 10px;
+}
+
+.nav-link {
+  padding: 10px 16px;
+  border-radius: 12px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--blue);
+  background: #eef4ff;
+  transform: translateY(-1px);
+}
+
+.nav-link[href="index.html"] {
+  color: var(--blue);
+  background: #eaf2ff;
+}
+
+.icon-btn {
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+  background: #eef4ff;
+}
+
 /* 모바일에서만 표시할 메뉴 버튼이며 기본 상태에서는 숨김 */
 .mobile-nav-button { display: none; }
 
@@ -431,6 +490,14 @@ button { cursor: pointer; }
   align-items: center;
 }
 
+/* 숫자와 항목명을 세로로 정렬 */
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
 /* 통계 카드의 아이콘 배경 영역 */
 .stat-icon {
   width: 48px;
@@ -575,6 +642,8 @@ button { cursor: pointer; }
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 8px 22px rgba(31,56,88,.06);
+  display: flex;
+  flex-direction: column;
 }
 
 .place-image {
@@ -587,6 +656,9 @@ button { cursor: pointer; }
 
 .place-content {
   padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .place-content h3 {
@@ -604,6 +676,7 @@ button { cursor: pointer; }
   color: var(--blue);
   font-size: 14px;
   font-weight: 800;
+  margin-top: auto;
 }
 
 /* 서브 페이지 제목과 우측 버튼을 정렬 */
@@ -1085,6 +1158,31 @@ textarea {
 }
 
 /* =========================================================
+   Footer
+   ========================================================= */
+
+.app-footer {
+  margin-top: 70px;
+  padding: 28px 0;
+
+  background: #17324d;
+  color: rgba(255,255,255,.82);
+}
+
+.footer-inner{
+    max-width:1180px;
+    margin:auto;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.footer-inner span{
+    font-size:14px;
+}
+
+/* =========================================================
    19. 반응형 스타일
    - 태블릿 이하(1000px), 모바일 이하(680px) 화면 대응
    ========================================================= */
@@ -1156,12 +1254,12 @@ textarea {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(8, 29, 61, 0.78) 0%,
-    rgba(8, 29, 61, 0.6) 42%,
-    rgba(8, 29, 61, 0.12) 76%,
-    transparent 100%
+  background:linear-gradient(
+  90deg,
+  rgba(0,0,0,.62) 0%,
+  rgba(0,0,0,.42) 45%,
+  rgba(0,0,0,.15) 75%,
+  transparent 100%
   );
 }
 
@@ -1391,3 +1489,51 @@ textarea {
     min-height: 180px;
   }
 }
+
+
+/* =========================================================
+   추천 장소 카드 마감
+   ========================================================= */
+
+.place-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(31, 56, 88, 0.12);
+}
+
+.place-image {
+  height: 210px;
+}
+
+.place-content {
+  padding: 20px;
+}
+
+.place-content h3 {
+  margin: 10px 0 8px;
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.place-content p {
+  min-height: 42px;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.place-content a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 800;
+}
+

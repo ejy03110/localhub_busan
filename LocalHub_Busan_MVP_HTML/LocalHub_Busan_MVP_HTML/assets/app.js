@@ -299,6 +299,36 @@ function renderRecent() {
     .join("");
 }
 
+// =========================================================
+// 메인 화면 통계 카드에 실제 JSON 개수를 표시
+// =========================================================
+async function renderStatistics() {
+
+  const files = [
+    ["관광지", "data/부산_관광지.json"],
+    ["문화시설", "data/부산_문화시설.json"],
+    ["숙박", "data/부산_숙박.json"],
+    ["쇼핑", "data/부산_쇼핑.json"]
+  ];
+
+  for (const [name, path] of files) {
+
+    try {
+      const response = await fetch(path);
+      const data = await response.json();
+
+      const target = document.querySelector(`[data-stat="${name}"]`);
+
+      if (target) {
+        target.textContent = (data.items || []).length;
+      }
+
+    } catch (error) {
+      console.error(`${name} 데이터 로딩 실패`, error);
+    }
+  }
+}
+
 async function renderFeaturedPlaces() {
   const target = document.querySelector("[data-featured-places]");
 
@@ -353,7 +383,7 @@ async function renderFeaturedPlaces() {
                     target="_blank"
                     rel="noopener"
                   >
-                    지도에서 보기 →
+                    📍 지도 보기
                   </a>
                 `
                 : ""
@@ -1160,6 +1190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initChat();
   renderRecent();
   renderFeaturedPlaces();
+  renderStatistics();
   initBoard();
   initDetail();
   initWrite();
