@@ -501,18 +501,41 @@ function initBoard() {
   );
 }
 
-
 function initDetail() {
+  /*
+    게시글 상세 화면에 제목, 내용, 분류 정보, 작성일을 출력하는 함수입니다.
+
+    [연결되는 HTML 요소]
+    - data-detail-title
+    - data-detail-content
+    - data-detail-meta
+
+    [기능]
+    1. URL의 id로 게시글을 찾습니다.
+    2. 게시글이 없으면 안내 후 board.html로 이동합니다.
+    3. 제목과 내용을 화면에 출력합니다.
+    4. topic과 postType을 기준으로 분류 정보를 표시합니다.
+    5. 수정과 삭제 버튼 이벤트를 연결합니다.
+  */
   const title = document.querySelector("[data-detail-title]");
   const content = document.querySelector("[data-detail-content]");
   const meta = document.querySelector("[data-detail-meta]");
-  if (!title) return;
+
+  if (!title || !content || !meta) return;
 
   const posts = getPosts();
-  const post = posts.find(item => item.id === getId()) || posts[0];
+  const requestedId = getId();
+  const post = posts.find(item => item.id === requestedId);
+
+  if (!post) {
+    alert("게시글을 찾을 수 없습니다.");
+    location.href = "board.html";
+    return;
+  }
+
   title.textContent = post.title;
   content.textContent = post.content;
-  meta.textContent = `${post.category} · 작성일 ${post.createdAt}`;
+  meta.textContent = `${post.topic || "기타"} · ${post.postType || "자유"} · 작성일 ${post.createdAt}`;
 
   document.querySelector("[data-edit]")?.addEventListener("click", () => openPassword("edit", post));
   document.querySelector("[data-delete]")?.addEventListener("click", () => openPassword("delete", post));
