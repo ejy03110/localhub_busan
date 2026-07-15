@@ -549,52 +549,275 @@ function openPassword(mode, post) {
   };
 }
 
+/*
+==========================================================
+게시글 작성 및 수정 기능
+
+[이 함수가 담당하는 기능]
+
+1. 새 게시글 작성
+2. 기존 게시글 수정
+3. 주제 저장
+   - 관광
+   - 숙박
+   - 기타
+   - 자유
+4. 글 성격 저장
+   - 질문
+   - 후기
+   - 자유
+5. 제목, 내용, 비밀번호 검사
+6. localStorage에 게시글 저장
+7. 저장 후 게시판 목록으로 이동
+
+[작성 모드와 수정 모드 구분]
+
+post-write.html
+→ 새 게시글 작성
+
+post-write.html?id=3
+→ ID가 3인 게시글 수정
+==========================================================
+*/
 function initWrite() {
-  const form = document.querySelector("[data-post-form]");
+  /*
+    게시글 작성 폼을 찾습니다.
+
+    post-write.html에 있는
+    data-post-form 속성과 연결됩니다.
+  */
+  const form = document.querySelector(
+    "[data-post-form]"
+  );
+
+  /*
+    현재 페이지에 게시글 작성 폼이 없다면
+    이 함수를 실행하지 않고 종료합니다.
+
+    app.js는 여러 HTML 페이지에서 함께 사용하기 때문에
+    이러한 확인 과정이 필요합니다.
+  */
   if (!form) return;
 
-  const id = getId();
-  const title = document.querySelector("[data-post-title]");
-  const content = document.querySelector("[data-post-content]");
-  const password = document.querySelector("[data-post-password]");
-  const category = document.querySelector("[data-post-category]");
-  const heading = document.querySelector("[data-form-title]");
 
+  /*
+    주소에 포함된 게시글 ID를 가져옵니다.
+
+    예:
+    post-write.html?id=3
+
+    위 주소에서는 id 값이 3이 됩니다.
+
+    ID가 있으면 수정 모드,
+    ID가 없으면 새 글 작성 모드입니다.
+  */
+  const id = getId();
+
+
+  /*
+    게시글 입력 요소를 각각 찾습니다.
+  */
+
+  // 게시글 주제 선택창
+  const topic = document.querySelector(
+    "[data-post-topic]"
+  );
+
+  // 글 성격 선택창
+  const postType = document.querySelector(
+    "[data-post-type]"
+  );
+
+  // 제목 입력창
+  const title = document.querySelector(
+    "[data-post-title]"
+  );
+
+  // 내용 입력창
+  const content = document.querySelector(
+    "[data-post-content]"
+  );
+
+  // 수정·삭제용 비밀번호 입력창
+  const password = document.querySelector(
+    "[data-post-password]"
+  );
+
+  // 페이지 제목: 게시글 작성 또는 게시글 수정
+  const heading = document.querySelector(
+    "[data-form-title]"
+  );
+
+
+  /*
+    수정 모드 처리
+
+    주소에 게시글 ID가 있다면
+    기존 게시글을 찾아 입력창에 내용을 채웁니다.
+  */
   if (id) {
-    const post = getPosts().find(item => item.id === id);
+    const post = getPosts().find(
+      item => item.id === id
+    );
+
+    /*
+      해당 ID의 게시글을 찾은 경우에만
+      수정 화면을 구성합니다.
+    */
     if (post) {
       heading.textContent = "게시글 수정";
+
+      /*
+        기존 게시글 값을 각 입력창에 넣습니다.
+      */
+      topic.value = post.topic;
+      postType.value = post.postType;
       title.value = post.title;
       content.value = post.content;
       password.value = post.password;
-      category.value = post.category;
+    } else {
+      /*
+        존재하지 않는 게시글 ID로 접근한 경우
+        안내 후 게시판 목록으로 이동합니다.
+      */
+      alert("수정할 게시글을 찾을 수 없습니다.");
+      location.href = "board.html";
+      return;
     }
   }
 
+
+  /*
+    저장 버튼을 누르면 form의 submit 이벤트가 발생합니다.
+  */
   form.addEventListener("submit", event => {
+    /*
+      HTML 폼의 기본 제출 동작을 막습니다.
+
+      이 코드가 없으면 페이지가 새로고침되면서
+      JavaScript 저장 처리가 중단될 수 있습니다.
+    */
     event.preventDefault();
+
+
+    /*
+      사용자가 입력한 값을 하나의 객체로 정리합니다.
+
+      게시글의 큰 분류인 topic을 먼저 작성하고,
+      그 안의 글 성격인 postType을 다음에 작성합니다.
+    */
     const values = {
+      topic: topic.value,
+      postType: postType.value,
       title: title.value.trim(),
       content: content.value.trim(),
-      password: password.value.trim(),
-      category: category.value
+      password: password.value.trim()
     };
 
-    if (!values.title || !values.content || values.password.length < 4) {
-      alert("제목, 내용, 4자리 이상의 비밀번호를 입력하세요.");
+
+    /*
+      입력값 검사
+
+      제목과 내용은 반드시 입력해야 하며,
+      비밀번호는 4자리 이상이어야 합니다.
+    */
+    if (!values.title) {
+      alert("제목을 입력하세요.");
+      title.focus();
       return;
     }
 
-    const posts = getPosts();
-    if (id) {
-      const index = posts.findIndex(item => item.id === id);
-      posts[index] = { ...posts[index], ...values };
-    } else {
-      const nextId = posts.length ? Math.max(...posts.map(item => item.id)) + 1 : 1;
-      posts.push({ id: nextId, ...values, createdAt: new Date().toISOString().slice(0,10) });
+    if (!values.content) {
+      alert("내용을 입력하세요.");
+      content.focus();
+      return;
     }
+
+    if (values.password.length < 4) {
+      alert("비밀번호는 4자리 이상 입력하세요.");
+      password.focus();
+      return;
+    }
+
+
+    /*
+      현재 저장된 게시글 목록을 불러옵니다.
+    */
+    const posts = getPosts();
+
+
+    /*
+      ID가 있으면 기존 게시글 수정,
+      ID가 없으면 새 게시글 작성입니다.
+    */
+    if (id) {
+      /*
+        수정할 게시글의 배열 위치를 찾습니다.
+      */
+      const index = posts.findIndex(
+        item => item.id === id
+      );
+
+      if (index === -1) {
+        alert("수정할 게시글을 찾을 수 없습니다.");
+        return;
+      }
+
+      /*
+        기존 게시글의 ID와 작성일은 유지하면서
+        사용자가 수정한 값만 덮어씁니다.
+      */
+      posts[index] = {
+        ...posts[index],
+        ...values
+      };
+    } else {
+      /*
+        새 게시글 ID 생성
+
+        현재 가장 큰 ID에 1을 더합니다.
+        게시글이 하나도 없다면 1부터 시작합니다.
+      */
+      const nextId = posts.length
+        ? Math.max(...posts.map(post => post.id)) + 1
+        : 1;
+
+      /*
+        새 게시글을 게시글 배열에 추가합니다.
+      */
+      posts.push({
+        id: nextId,
+        ...values,
+
+        /*
+          현재 날짜를 YYYY-MM-DD 형식으로 저장합니다.
+        */
+        createdAt: new Date()
+          .toISOString()
+          .slice(0, 10)
+      });
+    }
+
+
+    /*
+      변경된 게시글 목록을 localStorage에 저장합니다.
+    */
     savePosts(posts);
-    alert(id ? "게시글이 수정되었습니다." : "게시글이 등록되었습니다.");
+
+
+    /*
+      작성 또는 수정 완료 안내를 표시합니다.
+    */
+    alert(
+      id
+        ? "게시글이 수정되었습니다."
+        : "게시글이 등록되었습니다."
+    );
+
+
+    /*
+      저장이 완료되면 게시판 목록으로 이동합니다.
+    */
     location.href = "board.html";
   });
 }
