@@ -529,7 +529,7 @@ button { cursor: pointer; }
 
 /* 날씨 정보를 보여 주는 파란색 그라데이션 카드 */
 .weather-card {
-  min-height: 250px;
+  min-height: 180px;
   padding: 26px;
   color: #fff;
   background: linear-gradient(145deg, #2f6fed, #6aa7ff);
@@ -537,9 +537,19 @@ button { cursor: pointer; }
   box-shadow: var(--shadow);
 }
 /* 현재 기온을 크게 강조 */
-.weather-main { font-size: 54px; font-weight: 900; line-height: 1; margin: 18px 0 8px; }
+.weather-main { font-size: 42px; font-weight: 900; line-height: 1; margin: 14px 0 6px; }
 /* 날씨의 세부 정보를 양쪽으로 배치 */
 .weather-row { display: flex; justify-content: space-between; margin-top: 28px; opacity: .9; }
+
+/* 홈 섹션 바로 아래의 날씨 카드 간격 확보 */
+.section + .weather-card {
+  margin-top: 2.5rem;
+}
+/* 반응형: 태블릿 이하에서도 비율 유지 */
+@media (max-width: 1000px) {
+  .weather-card { min-height: 160px; padding: 18px; }
+  .weather-main { font-size: 36px; }
+}
 
 /* =========================================================
    10. 서브 페이지 공통 제목 및 검색 도구
@@ -551,6 +561,49 @@ button { cursor: pointer; }
   margin-bottom: 16px;
   color: var(--muted);
   font-size: 14px;
+}
+
+.place-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.place-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(31,56,88,.06);
+}
+
+.place-image {
+  height: 180px;
+  background-color: #e7edf5;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.place-content {
+  padding: 18px;
+}
+
+.place-content h3 {
+  margin: 10px 0 6px;
+}
+
+.place-content p {
+  min-height: 44px;
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.place-content a {
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 800;
 }
 
 /* 서브 페이지 제목과 우측 버튼을 정렬 */
@@ -1073,4 +1126,268 @@ textarea {
   .chat-panel { inset: 0; width: 100%; height: 100%; border-radius: 0; }
   .chat-fab { right: 18px; bottom: 18px; }
   .footer-inner { flex-direction: column; }
+}
+
+/* =========================================================
+   홈 화면 Hero
+   - 시안 기반 부산 대표 이미지 배너
+   ========================================================= */
+
+.home-hero {
+  margin-bottom: 34px;
+}
+
+.home-hero-image {
+  position: relative;
+  height: 470px;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+
+.home-hero-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 29, 61, 0.78) 0%,
+    rgba(8, 29, 61, 0.6) 42%,
+    rgba(8, 29, 61, 0.12) 76%,
+    transparent 100%
+  );
+}
+
+.home-hero-overlay {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 56px;
+  width: min(720px, 65%);
+  color: #fff;
+  transform: translateY(-50%);
+}
+
+.home-badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 7px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.home-hero-overlay h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: 54px;
+  line-height: 1.15;
+  letter-spacing: -2px;
+}
+
+.home-hero-overlay p {
+  max-width: 540px;
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.home-hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.home-primary-button,
+.home-secondary-button {
+  min-height: 48px;
+  padding: 0 21px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 850;
+}
+
+.home-primary-button {
+  background: var(--blue);
+  color: #fff;
+}
+
+.home-secondary-button {
+  background: #fff;
+  color: var(--navy);
+}
+
+.home-primary-button:hover,
+.home-secondary-button:hover {
+  transform: translateY(-1px);
+}
+
+/* 태블릿 */
+@media (max-width: 850px) {
+  .home-hero-overlay {
+    left: 34px;
+    width: 65%;
+  }
+
+  .home-hero-overlay h1 {
+    font-size: 46px;
+  }
+}
+
+/* 모바일 */
+@media (max-width: 560px) {
+  .home-hero-image {
+    height: 470px;
+  }
+
+  .home-hero-image::after {
+    background: rgba(8, 29, 61, 0.6);
+  }
+
+  .home-hero-overlay {
+    left: 24px;
+    right: 24px;
+    width: auto;
+  }
+
+  .home-hero-overlay h1 {
+    font-size: 39px;
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+  }
+}
+
+/* =========================================================
+   인기 게시글 카드
+   ========================================================= */
+
+.community-preview {
+  margin-top: 44px;
+}
+
+.community-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.community-card {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+
+  min-height: 190px;
+  padding: 18px;
+
+  border: 1px solid var(--line);
+  border-radius: 18px;
+
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(31, 56, 88, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.community-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(31, 56, 88, 0.12);
+}
+
+.community-card-content {
+  min-width: 0;
+}
+
+.community-category {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #eaf2ff;
+  color: var(--blue);
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.community-card h3 {
+  margin: 12px 0 8px;
+
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.community-card p {
+  display: -webkit-box;
+  overflow: hidden;
+
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 14px;
+  line-height: 1.6;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.community-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 16px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.community-thumb {
+  min-height: 150px;
+
+  border-radius: 14px;
+
+  background-color: #e7edf5;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 1000px) {
+  .community-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .community-card {
+    grid-template-columns: 1fr 160px;
+  }
+}
+
+@media (max-width: 560px) {
+  .community-card {
+    grid-template-columns: 1fr;
+  }
+
+  .community-thumb {
+    min-height: 180px;
+  }
 }

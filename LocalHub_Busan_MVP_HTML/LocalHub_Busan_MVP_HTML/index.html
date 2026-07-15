@@ -26,28 +26,73 @@
 
 
 <main class="page" id="main">
-  <section class="hero">
-    <div class="hero-copy">
-      <span class="kicker">📍 부산 공공데이터 기반 지역 생활 플랫폼</span>
-      <h1>부산을 찾고,<br>경험을 나누다.</h1>
-      <p>해변·관광지·문화시설·축제·맛집 정보를 한눈에 탐색하고, 익명 커뮤니티에서 실제 경험을 공유하세요.</p>
-      <div class="hero-actions">
-        <a class="btn btn-light" href="explore.html">부산 지도 탐색</a>
-        <a class="btn btn-teal" href="board.html">커뮤니티 보기</a>
-        <button class="btn btn-ghost" type="button" data-chat-toggle>AI 챗봇 질문</button>
-      </div>
-    </div>
-    <div class="hero-visual" aria-label="부산 지역 지도 미리보기">
-      <div class="seoul-map">
-        <div class="river"></div>
-        <span class="map-pin pin-1"><span>🏛️</span></span>
-        <span class="map-pin pin-2"><span>🌳</span></span>
-        <span class="map-pin pin-3"><span>🍽️</span></span>
-        <div class="map-card">
-          <div><strong>부산 지역 정보 136건</strong><small>관광지 · 축제 · 문화시설 · 맛집</small></div>
-          <a class="btn btn-soft" href="explore.html">지도 열기</a>
+  <section class="home-hero">
+    <div class="home-hero-image">
+      <img
+        src="assets/hero-busan.jpg"
+        alt="광안대교와 부산 해변"
+      >
+
+      <div class="home-hero-overlay">
+        <span class="home-badge">📍 부산 지역 커뮤니티</span>
+
+        <h1>
+          부산의 장소마다<br>
+          사람들의 이야기가 쌓이는 공간
+        </h1>
+
+        <p>
+          부산 주민과 관광객이 질문, 후기, 지역소식을<br>
+          자유롭게 공유하는 익명 커뮤니티입니다.
+        </p>
+
+        <div class="home-hero-actions">
+          <a
+            class="home-primary-button"
+            href="post-write.html"
+          >
+            게시글 작성
+          </a>
+
+          <a
+            class="home-secondary-button"
+            href="explore.html"
+          >
+            지역정보 보기
+          </a>
         </div>
       </div>
+    </div>
+  </section>
+
+    <section class="section community-preview">
+      <div class="section-head">
+        <div>
+          <h2>🔥 인기 게시글</h2>
+          <p>지역 주민과 관광객의 최신 이야기</p>
+        </div>
+
+        <a class="btn btn-ghost" href="board.html">
+          전체보기
+        </a>
+      </div>
+
+      <div class="community-card-grid" data-recent-posts></div>
+    </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>📍 추천 장소</h2>
+        <p>부산에서 많이 찾는 장소를 만나보세요.</p>
+      </div>
+
+      <a class="btn btn-ghost" href="explore.html">
+        전체보기
+      </a>
+    </div>
+
+    <div class="place-grid" data-featured-places>
     </div>
   </section>
 
@@ -61,27 +106,13 @@
     </div>
   </section>
 
-  <section class="section">
-    <div class="section-head"><div><h2>어떤 정보를 찾으시나요?</h2><p>주제별로 빠르게 탐색하세요.</p></div></div>
-    <div class="category-grid">
-      <a class="card category-card" href="explore.html"><div class="category-icon">🗺️</div><h3>관광지 지도</h3><p>위치와 유형을 기준으로 부산 명소를 찾아보세요.</p></a>
-      <a class="card category-card" href="explore.html"><div class="category-icon">🍜</div><h3>모범음식점</h3><p>행정 인증 맛집과 주변 정보를 살펴보세요.</p></a>
-      <a class="card category-card" href="board.html"><div class="category-icon">💬</div><h3>지역 커뮤니티</h3><p>익명으로 질문하고 지역 경험을 나누세요.</p></a>
-    </div>
+  <section class="weather-card">
+    <small>부산 현재 날씨 · 데모</small>
+    <div class="weather-main">27°</div>
+    <strong>맑음, 해변 산책하기 좋아요</strong>
+    <div class="weather-row"><span>강수 20%</span><span>미세먼지 보통</span></div>
   </section>
 
-  <section class="section two-col">
-    <div class="panel">
-      <div class="section-head"><div><h2>최근 커뮤니티 글</h2><p>지역 주민과 관광객의 최신 이야기</p></div><a class="btn btn-ghost" href="board.html">전체보기</a></div>
-      <div data-recent-posts></div>
-    </div>
-    <aside class="weather-card">
-      <small>부산 현재 날씨 · 데모</small>
-      <div class="weather-main">27°</div>
-      <strong>맑음, 해변 산책하기 좋아요</strong>
-      <div class="weather-row"><span>강수 20%</span><span>미세먼지 보통</span></div>
-    </aside>
-  </section>
 </main>
 
 

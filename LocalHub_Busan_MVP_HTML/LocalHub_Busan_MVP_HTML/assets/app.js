@@ -1,12 +1,39 @@
 
 const SAMPLE_POSTS = [
-  { id: 8, title: "주말에 가족과 걷기 좋은 해운대·동백섬 코스", content: "해운대역에서 시작해 동백섬과 해운대 해변 산책로를 걷는 코스입니다.
-오전 시간대가 비교적 여유롭습니다.", password: "1234", createdAt: "2026-07-14", category: "여행코스" },
-  { id: 7, title: "남포동 근처 무료 전시 정보", content: "남포동과 영도 일대에서 무료로 관람할 수 있는 전시를 공유합니다.", password: "1234", createdAt: "2026-07-13", category: "문화시설" },
-  { id: 6, title: "광안대교 야경 보기 좋은 시간과 위치", content: "노을 30분 전부터 광안리해수욕장에 도착하면 좋습니다.", password: "1234", createdAt: "2026-07-12", category: "관광지" },
-  { id: 5, title: "서면 모범음식점 방문 후기", content: "공공데이터에 등록된 모범음식점 중 한 곳을 방문했습니다.", password: "1234", createdAt: "2026-07-11", category: "맛집" },
-  { id: 4, title: "7월 부산 축제 일정 정리", content: "이번 달 주요 축제 일정을 날짜별로 정리했습니다.", password: "1234", createdAt: "2026-07-10", category: "축제" },
-  { id: 3, title: "비 오는 날 가기 좋은 부산 실내 명소", content: "국립해양박물관과 부산박물관을 추천합니다.", password: "1234", createdAt: "2026-07-09", category: "문화시설" }
+  { id: 8, title: "주말에 가족과 걷기 좋은 해운대·동백섬 코스", 
+    content: "해운대역에서 시작해 동백섬과 해운대 해변 산책로를 걷는 코스입니다. \n오전 시간대가 비교적 여유롭습니다.", 
+    password: "1234", 
+    createdAt: "2026-07-14", 
+    category: "여행코스" 
+  },
+  { id: 7, title: "남포동 근처 무료 전시 정보", 
+    content: "남포동과 영도 일대에서 무료로 관람할 수 있는 전시를 공유합니다.", 
+    password: "1234", 
+    createdAt: "2026-07-13", 
+    category: "문화시설" 
+  },
+  { id: 6, title: "광안대교 야경 보기 좋은 시간과 위치", 
+    content: "노을 30분 전부터 광안리해수욕장에 도착하면 좋습니다.", 
+    password: "1234", 
+    createdAt: "2026-07-12", 
+    category: "관광지" 
+  },
+  { id: 5, title: "서면 모범음식점 방문 후기", 
+    content: "공공데이터에 등록된 모범음식점 중 한 곳을 방문했습니다.", 
+    password: "1234", 
+    createdAt: "2026-07-11", 
+    category: "맛집" 
+  },
+  { id: 4, title: "7월 부산 축제 일정 정리", 
+    content: "이번 달 주요 축제 일정을 날짜별로 정리했습니다.", 
+    password: "1234", 
+    createdAt: "2026-07-10", 
+    category: "축제" },
+  { id: 3, title: "비 오는 날 가기 좋은 부산 실내 명소", 
+    content: "국립해양박물관과 부산박물관을 추천합니다.", 
+    password: "1234", 
+    createdAt: "2026-07-09", 
+    category: "문화시설" }
 ];
 
 function escapeHtml(value = "") {
@@ -70,14 +97,129 @@ function initChat() {
 
 function renderRecent() {
   const target = document.querySelector("[data-recent-posts]");
+
   if (!target) return;
-  const posts = getPosts().slice().sort((a,b) => b.id - a.id).slice(0,5);
-  target.innerHTML = posts.map(post => `
-    <a class="post-item" href="post-detail.html?id=${post.id}">
-      <span><span class="post-title">${escapeHtml(post.title)}</span><br><span class="post-meta">${escapeHtml(post.category)}</span></span>
-      <span class="post-meta">${post.createdAt}</span>
-    </a>
-  `).join("");
+
+  const posts = getPosts()
+    .slice()
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 3);
+
+  target.innerHTML = posts
+    .map((post, index) => {
+      const images = [
+        "assets/hero-busan.jpg",
+        "assets/hero-busan.jpg",
+        "assets/hero-busan.jpg"
+      ];
+
+      return `
+        <a
+          class="community-card"
+          href="post-detail.html?id=${post.id}"
+        >
+          <div class="community-card-content">
+            <span class="community-category">
+              ${escapeHtml(post.category)}
+            </span>
+
+            <h3>
+              ${escapeHtml(post.title)}
+            </h3>
+
+            <p>
+              ${escapeHtml(post.content)}
+            </p>
+
+            <div class="community-meta">
+              <span>♡ ${23 - index * 5}</span>
+              <span>◎ ${145 - index * 28}</span>
+              <span>${post.createdAt}</span>
+            </div>
+          </div>
+
+          <div
+            class="community-thumb"
+            style="background-image:url('${images[index]}')"
+          ></div>
+        </a>
+      `;
+    })
+    .join("");
+}
+
+async function renderFeaturedPlaces() {
+  const target = document.querySelector("[data-featured-places]");
+
+  if (!target) return;
+
+  try {
+    const response = await fetch("data/부산_관광지.json");
+
+    if (!response.ok) {
+      throw new Error("추천 장소 데이터를 불러오지 못했습니다.");
+    }
+
+    const data = await response.json();
+
+    const places = (data.items || [])
+      .filter(place => place.firstimage || place.firstimage2)
+      .slice(0, 4);
+
+    target.innerHTML = places.map(place => {
+      const image =
+        place.firstimage2 ||
+        place.firstimage ||
+        "assets/hero-busan.jpg";
+
+      const address = [place.addr1, place.addr2]
+        .filter(Boolean)
+        .join(" ");
+
+      return `
+        <article class="place-card">
+          <div
+            class="place-image"
+            style="background-image: url('${escapeHtml(image)}')"
+          ></div>
+
+          <div class="place-content">
+            <span class="badge">관광지</span>
+
+            <h3>${escapeHtml(place.title || "장소명 없음")}</h3>
+
+            <p>
+              ${escapeHtml(address || "주소 정보 없음")}
+            </p>
+
+            ${
+              place.mapx && place.mapy
+                ? `
+                  <a
+                    href="https://map.kakao.com/link/map/${encodeURIComponent(
+                      place.title || "부산 장소"
+                    )},${place.mapy},${place.mapx}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    지도에서 보기 →
+                  </a>
+                `
+                : ""
+            }
+          </div>
+        </article>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+
+    target.innerHTML = `
+      <p class="notice">
+        추천 장소를 불러오지 못했습니다.
+      </p>
+    `;
+  }
 }
 
 function initBoard() {
@@ -221,6 +363,7 @@ function initMapFilters() {
 document.addEventListener("DOMContentLoaded", () => {
   initChat();
   renderRecent();
+  renderFeaturedPlaces();
   initBoard();
   initDetail();
   initWrite();
