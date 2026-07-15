@@ -2,35 +2,100 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--
+    모바일 기기에서도 화면 크기에 맞게
+    반응형으로 표시하기 위한 기본 설정입니다.
+  -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
   <title>게시글 작성 | LocalHub</title>
-  <link rel="stylesheet" href="assets/styles.css">
+
+  <!-- 프로젝트 전체의 공통 디자인 파일을 연결합니다. -->
+  <link
+    rel="stylesheet"
+    href="assets/styles.css"
+  >
 </head>
+
 <body>
 
-<a class="skip-link" href="#main">본문 바로가기</a>
+<!--
+  키보드 사용자와 스크린리더 사용자가
+  본문으로 바로 이동할 수 있도록 만든 접근성 링크입니다.
+-->
+<a
+  class="skip-link"
+  href="#main"
+>
+  본문 바로가기
+</a>
 
+
+<!-- =========================================================
+     공통 상단 헤더
+     ========================================================= -->
 <header class="app-header">
   <div class="header-inner">
 
-    <!-- LocalHub 로고: 클릭하면 홈 화면으로 이동합니다. -->
-    <a class="logo" href="index.html">
+    <!--
+      LocalHub 로고입니다.
+      클릭하면 홈 화면인 index.html로 이동합니다.
+    -->
+    <a
+      class="logo"
+      href="index.html"
+    >
       <span class="logo-mark">L</span>
       <span>LocalHub</span>
     </a>
 
+
     <!--
       프로젝트 공통 내비게이션입니다.
-      축제 캘린더 화면을 사용하지 않으므로 해당 메뉴를 제거했습니다.
+
+      축제 캘린더 화면은 사용하지 않으므로
+      festival.html 메뉴를 제외했습니다.
     -->
-    <nav class="main-nav" aria-label="주요 메뉴">
-      <a class="nav-link" href="index.html">홈</a>
-      <a class="nav-link" href="explore.html">지역 탐색</a>
-      <a class="nav-link" href="board.html">커뮤니티</a>
+    <nav
+      class="main-nav"
+      aria-label="주요 메뉴"
+    >
+      <a
+        class="nav-link"
+        href="index.html"
+      >
+        홈
+      </a>
+
+      <a
+        class="nav-link"
+        href="explore.html"
+      >
+        지역 탐색
+      </a>
+
+      <a
+        class="nav-link"
+        href="board.html"
+      >
+        커뮤니티
+      </a>
     </nav>
 
+
+    <!-- 오른쪽 상단 기능 버튼 영역입니다. -->
     <div class="header-actions">
-      <!-- 오른쪽 상단 챗봇 열기 버튼 -->
+
+      <!--
+        챗봇을 열고 닫는 버튼입니다.
+
+        data-chat-toggle 속성을 app.js에서 찾아
+        클릭 이벤트를 연결합니다.
+      -->
       <button
         class="icon-btn"
         type="button"
@@ -40,7 +105,12 @@
         💬
       </button>
 
-      <!-- 모바일 화면용 메뉴 버튼 -->
+      <!--
+        모바일 화면용 메뉴 버튼입니다.
+
+        현재는 화면 UI만 구성되어 있으며,
+        실제 메뉴 열기 기능은 추후 추가할 수 있습니다.
+      -->
       <button
         class="icon-btn mobile-nav-button"
         type="button"
@@ -48,93 +118,211 @@
       >
         ☰
       </button>
+
     </div>
   </div>
 </header>
 
 
-<main class="page" id="main">
+<!-- =========================================================
+     게시글 작성 및 수정 화면
+     ========================================================= -->
+<main
+  class="page"
+  id="main"
+>
 
-  <!-- 현재 페이지의 위치를 보여주는 경로 안내 -->
+  <!-- 현재 페이지의 위치를 보여주는 경로 안내입니다. -->
   <div class="breadcrumb">
     홈 &gt; 부산 커뮤니티 &gt; 글쓰기
   </div>
 
+
+  <!-- 페이지 제목과 안내 문구입니다. -->
   <div class="page-heading">
     <div>
-      <h1 data-form-title>게시글 작성</h1>
-      <p>지역 주민과 관광객에게 도움이 되는 정보를 공유해 주세요.</p>
+      <!--
+        새 글 작성 시에는 "게시글 작성",
+        수정 화면에서는 app.js가 "게시글 수정"으로 변경합니다.
+      -->
+      <h1 data-form-title>
+        게시글 작성
+      </h1>
+
+      <p>
+        지역 주민과 관광객에게 도움이 되는 정보를 공유해 주세요.
+      </p>
     </div>
   </div>
 
+
   <!--
-    게시글 작성/수정 폼입니다.
-    URL에 게시글 id가 있으면 수정 화면으로 사용됩니다.
+    ==========================================================
+    게시글 작성 및 수정 폼
+
+    URL에 게시글 id가 없으면 새 글 작성 모드입니다.
+
+    예:
+    post-write.html
+
+    URL에 게시글 id가 있으면 수정 모드입니다.
+
+    예:
+    post-write.html?id=3
+    ==========================================================
   -->
-  <form class="form-card" data-post-form>
+  <form
+    class="form-card"
+    data-post-form
+  >
 
     <!--
       ==========================================================
-      게시글 1차 분류: 글의 성격
+      1단계 분류: 게시글 주제
 
-      질문: 다른 사용자에게 정보나 추천을 요청하는 글
-      후기: 장소를 방문하거나 이용한 경험을 공유하는 글
-      자유: 질문이나 후기에 해당하지 않는 일반 글
+      게시글을 가장 먼저 큰 주제로 나눕니다.
+
+      관광
+      - 관광지
+      - 명소
+      - 여행지
+      - 여행 코스
+
+      숙박
+      - 호텔
+      - 펜션
+      - 게스트하우스
+      - 기타 숙소
+
+      기타
+      - 교통
+      - 쇼핑
+      - 레포츠
+      - 그 밖의 생활 정보
+
+      자유
+      - 특정 주제에 속하지 않는 일반적인 이야기
+
+      data-post-topic 속성을 app.js에서 찾아
+      사용자가 선택한 주제를 저장합니다.
       ==========================================================
     -->
     <div class="field">
-      <label for="postType">글 성격</label>
+      <label for="topic">
+        주제
+      </label>
 
-      <select id="postType" data-post-type>
-        <option value="질문">질문</option>
-        <option value="후기">후기</option>
-        <option value="자유">자유</option>
+      <select
+        id="topic"
+        data-post-topic
+      >
+        <option value="관광">
+          관광
+        </option>
+
+        <option value="숙박">
+          숙박
+        </option>
+
+        <option value="기타">
+          기타
+        </option>
+
+        <option value="자유">
+          자유
+        </option>
       </select>
 
       <div class="help">
-        작성하려는 글이 질문, 후기, 자유글 중 어디에 해당하는지 선택하세요.
+        먼저 게시글 내용과 가장 가까운 큰 주제를 선택하세요.
       </div>
     </div>
+
 
     <!--
       ==========================================================
-      게시글 2차 분류: 글의 주제
+      2단계 분류: 글의 성격
 
-      관광: 관광지, 명소, 여행지 관련 글
-      숙박: 호텔, 펜션, 게스트하우스 등 숙소 관련 글
-      기타: 교통, 쇼핑, 레포츠 등 다른 주제
-      자유: 특별한 주제가 없는 자유로운 글
+      선택한 주제 안에서 글의 목적을 다시 나눕니다.
+
+      질문
+      - 다른 사용자에게 정보나 추천을 요청하는 글
+
+      후기
+      - 장소를 방문하거나 서비스를 이용한 경험을 공유하는 글
+
+      자유
+      - 질문이나 후기에 해당하지 않는 일반적인 글
+
+      예:
+      주제: 숙박
+      글 성격: 질문
+      제목: 해운대 근처 가족 호텔 추천 부탁드립니다.
+
+      data-post-type 속성을 app.js에서 찾아
+      사용자가 선택한 글 성격을 저장합니다.
       ==========================================================
     -->
     <div class="field">
-      <label for="topic">주제</label>
+      <label for="postType">
+        글 성격
+      </label>
 
-      <select id="topic" data-post-topic>
-        <option value="관광">관광</option>
-        <option value="숙박">숙박</option>
-        <option value="기타">기타</option>
-        <option value="자유">자유</option>
+      <select
+        id="postType"
+        data-post-type
+      >
+        <option value="질문">
+          질문
+        </option>
+
+        <option value="후기">
+          후기
+        </option>
+
+        <option value="자유">
+          자유
+        </option>
       </select>
 
       <div class="help">
-        게시글 내용과 가장 가까운 주제를 선택하세요.
+        선택한 주제 안에서 질문, 후기, 자유글 중 하나를 선택하세요.
       </div>
     </div>
 
-    <!-- 게시글 제목 입력 -->
+
+    <!--
+      게시글 제목 입력 영역입니다.
+
+      data-post-title 속성을 app.js에서 찾아
+      제목을 읽거나 수정 화면에서 기존 제목을 채웁니다.
+    -->
     <div class="field">
-      <label for="title">제목</label>
+      <label for="title">
+        제목
+      </label>
+
       <input
         id="title"
         class="input"
+        type="text"
         data-post-title
         placeholder="제목을 입력하세요"
       >
     </div>
 
-    <!-- 게시글 내용 입력 -->
+
+    <!--
+      게시글 본문 입력 영역입니다.
+
+      data-post-content 속성을 app.js에서 찾아
+      내용을 저장하거나 수정 화면에서 기존 내용을 채웁니다.
+    -->
     <div class="field">
-      <label for="content">내용</label>
+      <label for="content">
+        내용
+      </label>
+
       <textarea
         id="content"
         data-post-content
@@ -142,12 +330,25 @@
       ></textarea>
     </div>
 
+
     <!--
-      게시글 수정·삭제 때 사용할 비밀번호입니다.
-      서버가 없는 교육용 프로젝트이므로 localStorage에 함께 저장됩니다.
+      ==========================================================
+      게시글 수정 및 삭제용 비밀번호
+
+      회원가입과 로그인 기능이 없는 익명 게시판이므로
+      작성자가 입력한 비밀번호를 이용해
+      수정 및 삭제 권한을 확인합니다.
+
+      이 프로젝트는 서버가 없는 교육용 프로젝트이므로
+      비밀번호도 게시글 정보와 함께 localStorage에 저장됩니다.
+
+      실제 서비스에서는 비밀번호를 그대로 저장하면 안 됩니다.
+      ==========================================================
     -->
     <div class="field">
-      <label for="password">수정용 비밀번호</label>
+      <label for="password">
+        수정용 비밀번호
+      </label>
 
       <input
         id="password"
@@ -159,23 +360,50 @@
 
       <div class="help">
         수정·삭제 시 동일한 비밀번호가 필요합니다.
-        교육용 설계에 따라 브라우저에 저장됩니다.
+        교육용 설계에 따라 현재 브라우저에 저장됩니다.
       </div>
     </div>
 
-    <!-- 취소 및 저장 버튼 -->
+
+    <!--
+      취소 및 저장 버튼 영역입니다.
+    -->
     <div class="form-actions">
-      <a class="btn btn-ghost" href="board.html">취소</a>
-      <button class="btn btn-primary" type="submit">저장</button>
+
+      <!-- 취소 버튼을 누르면 게시판 목록으로 돌아갑니다. -->
+      <a
+        class="btn btn-ghost"
+        href="board.html"
+      >
+        취소
+      </a>
+
+      <!--
+        저장 버튼을 누르면 폼의 submit 이벤트가 발생합니다.
+
+        app.js의 initWrite() 함수가 이 이벤트를 받아
+        새 글 작성 또는 기존 글 수정을 처리합니다.
+      -->
+      <button
+        class="btn btn-primary"
+        type="submit"
+      >
+        저장
+      </button>
+
     </div>
 
   </form>
 </main>
 
 
+<!-- =========================================================
+     오른쪽 아래 플로팅 챗봇 버튼
+     ========================================================= -->
+
 <!--
-  화면 오른쪽 아래에 고정되는 챗봇 열기 버튼입니다.
-  data-chat-toggle 속성을 app.js에서 찾아 클릭 이벤트를 연결합니다.
+  화면을 스크롤해도 오른쪽 아래에 고정되는
+  챗봇 열기 버튼입니다.
 -->
 <button
   class="chat-fab"
@@ -186,18 +414,30 @@
   💬
 </button>
 
-<!-- 챗봇 대화창 -->
+
+<!-- =========================================================
+     챗봇 대화창
+     ========================================================= -->
 <section
   class="chat-panel"
   data-chat-panel
   aria-label="LocalHub 챗봇"
 >
+
+  <!-- 챗봇 제목 및 닫기 버튼 영역입니다. -->
   <header class="chat-head">
+
     <div>
-      <h3>LocalHub 챗</h3>
-      <small>부산 지역 정보 도우미</small>
+      <h3>
+        LocalHub 챗
+      </h3>
+
+      <small>
+        부산 지역 정보 도우미
+      </small>
     </div>
 
+    <!-- 챗봇 닫기 버튼입니다. -->
     <button
       class="chat-close"
       type="button"
@@ -206,41 +446,81 @@
     >
       ×
     </button>
+
   </header>
 
-  <div class="chat-body" data-chat-body>
-    <!--
-      챗봇의 첫 안내 문구입니다.
-      현재 사용하는 관광, 숙박, 커뮤니티 주제에 맞춘 문구입니다.
-    -->
+
+  <!--
+    사용자와 챗봇의 메시지가 표시되는 영역입니다.
+  -->
+  <div
+    class="chat-body"
+    data-chat-body
+  >
+
+    <!-- 챗봇을 처음 열었을 때 표시되는 안내 문구입니다. -->
     <div class="message bot">
-      안녕하세요. 부산 관광지, 숙박 정보 또는 커뮤니티 게시글을 질문해 주세요.
+      안녕하세요. 부산 관광지, 숙박 정보 또는
+      커뮤니티 게시글을 질문해 주세요.
     </div>
+
   </div>
 
-  <form class="chat-input" data-chat-form>
-    <!-- 사용자가 어떤 질문을 입력할 수 있는지 예시를 보여줍니다. -->
+
+  <!-- 챗봇 질문 입력 폼입니다. -->
+  <form
+    class="chat-input"
+    data-chat-form
+  >
+
+    <!--
+      사용자가 챗봇에게 보낼 질문을 입력합니다.
+    -->
     <input
       class="input"
+      type="text"
       data-chat-input
       placeholder="예: 해운대 근처 숙소 추천해줘"
+      aria-label="챗봇 질문 입력"
     >
 
-    <button class="btn btn-primary" type="submit">
+    <!-- 질문 전송 버튼입니다. -->
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
       전송
     </button>
+
   </form>
+
 </section>
 
 
+<!-- =========================================================
+     공통 푸터
+     ========================================================= -->
 <footer class="app-footer">
+
   <div class="footer-inner">
-    <span>© 2026 LocalHub · 부산 지역 정보 공유 커뮤니티</span>
-    <span>공공데이터 기반 교육용 SPA 프로토타입</span>
+
+    <span>
+      © 2026 LocalHub · 부산 지역 정보 공유 커뮤니티
+    </span>
+
+    <span>
+      공공데이터 기반 교육용 SPA 프로토타입
+    </span>
+
   </div>
+
 </footer>
 
-<!-- 게시판 작성, 수정, 챗봇 기능을 담당하는 JavaScript 파일 -->
+
+<!--
+  게시글 작성, 수정, 목록, 상세, 삭제 및
+  챗봇 기능을 담당하는 JavaScript 파일입니다.
+-->
 <script src="assets/app.js"></script>
 
 </body>
