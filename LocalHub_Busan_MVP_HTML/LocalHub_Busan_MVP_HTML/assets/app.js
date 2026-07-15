@@ -1,12 +1,83 @@
 
+/*
+==========================================================
+게시판 기본 샘플 데이터
+
+게시글은 두 단계로 분류합니다.
+
+1. topic: 게시글의 큰 주제
+   - 관광
+   - 숙박
+   - 기타
+   - 자유
+
+2. postType: 선택한 주제 안에서 글의 성격
+   - 질문
+   - 후기
+   - 자유
+
+기본 비밀번호는 교육용 테스트를 위해 1234로 설정합니다.
+==========================================================
+*/
 const SAMPLE_POSTS = [
-  { id: 8, title: "주말에 가족과 걷기 좋은 해운대·동백섬 코스", content: "해운대역에서 시작해 동백섬과 해운대 해변 산책로를 걷는 코스입니다.
-오전 시간대가 비교적 여유롭습니다.", password: "1234", createdAt: "2026-07-14", category: "여행코스" },
-  { id: 7, title: "남포동 근처 무료 전시 정보", content: "남포동과 영도 일대에서 무료로 관람할 수 있는 전시를 공유합니다.", password: "1234", createdAt: "2026-07-13", category: "문화시설" },
-  { id: 6, title: "광안대교 야경 보기 좋은 시간과 위치", content: "노을 30분 전부터 광안리해수욕장에 도착하면 좋습니다.", password: "1234", createdAt: "2026-07-12", category: "관광지" },
-  { id: 5, title: "서면 모범음식점 방문 후기", content: "공공데이터에 등록된 모범음식점 중 한 곳을 방문했습니다.", password: "1234", createdAt: "2026-07-11", category: "맛집" },
-  { id: 4, title: "7월 부산 축제 일정 정리", content: "이번 달 주요 축제 일정을 날짜별로 정리했습니다.", password: "1234", createdAt: "2026-07-10", category: "축제" },
-  { id: 3, title: "비 오는 날 가기 좋은 부산 실내 명소", content: "국립해양박물관과 부산박물관을 추천합니다.", password: "1234", createdAt: "2026-07-09", category: "문화시설" }
+  {
+    id: 6,
+    title: "해운대 근처 가족 호텔 추천 부탁드립니다",
+    content: "아이와 함께 묵기 좋은 해운대 근처 숙소를 찾고 있습니다.",
+    password: "1234",
+    createdAt: "2026-07-14",
+
+    // 게시글의 큰 주제
+    topic: "숙박",
+
+    // 숙박 주제 안에서 추천을 요청하는 질문 글
+    postType: "질문"
+  },
+  {
+    id: 5,
+    title: "광안리 숙소 1박 후기",
+    content: "광안리 바다 근처 숙소를 이용했는데 야경을 보기 좋았습니다.",
+    password: "1234",
+    createdAt: "2026-07-13",
+    topic: "숙박",
+    postType: "후기"
+  },
+  {
+    id: 4,
+    title: "비 오는 날 갈 만한 부산 관광지 있나요?",
+    content: "실내에서 이용할 수 있는 부산 관광지를 추천받고 싶습니다.",
+    password: "1234",
+    createdAt: "2026-07-12",
+    topic: "관광",
+    postType: "질문"
+  },
+  {
+    id: 3,
+    title: "감천문화마을 방문 후기",
+    content: "골목과 전망이 아름다웠지만 경사가 많아서 편한 신발이 필요합니다.",
+    password: "1234",
+    createdAt: "2026-07-11",
+    topic: "관광",
+    postType: "후기"
+  },
+  {
+    id: 2,
+    title: "부산 여행 준비하면서 궁금한 점",
+    content: "부산 대중교통 이용 팁을 자유롭게 공유해주세요.",
+    password: "1234",
+    createdAt: "2026-07-10",
+    topic: "기타",
+    postType: "자유"
+  },
+  {
+    id: 1,
+    title: "부산 여행 자유 이야기",
+    content: "부산에서 좋았던 장소를 자유롭게 이야기해 주세요.",
+    password: "1234",
+    createdAt: "2026-07-09",
+    topic: "자유",
+    postType: "자유"
+  }
 ];
 
 function escapeHtml(value = "") {
@@ -15,14 +86,125 @@ function escapeHtml(value = "") {
   })[ch]);
 }
 
+/*
+==========================================================
+localStorage에서 게시글 목록을 가져오는 함수
+
+기존 게시글은 category 속성만 가지고 있을 수 있습니다.
+새 게시글은 topic과 postType을 사용하므로,
+오래된 데이터를 자동으로 새 구조로 변환합니다.
+==========================================================
+*/
 function getPosts() {
+  /*
+    localStorage에서 게시글 문자열을 가져옵니다.
+  */
   const raw = localStorage.getItem("localhub-mvp-posts");
+
+  /*
+    저장된 게시글이 하나도 없다면
+    SAMPLE_POSTS를 localStorage에 저장하고 반환합니다.
+  */
   if (!raw) {
-    localStorage.setItem("localhub-mvp-posts", JSON.stringify(SAMPLE_POSTS));
+    localStorage.setItem(
+      "localhub-mvp-posts",
+      JSON.stringify(SAMPLE_POSTS)
+    );
+
     return [...SAMPLE_POSTS];
   }
-  try { return JSON.parse(raw); }
-  catch { return [...SAMPLE_POSTS]; }
+
+  try {
+    /*
+      JSON 문자열을 실제 JavaScript 배열로 바꿉니다.
+    */
+    const posts = JSON.parse(raw);
+
+    /*
+      예전 게시글 데이터는 category만 가지고 있을 수 있습니다.
+
+      예전 구조:
+      {
+        category: "관광지"
+      }
+
+      새 구조:
+      {
+        topic: "관광",
+        postType: "자유"
+      }
+    */
+    const convertedPosts = posts.map(post => {
+      /*
+        이미 topic과 postType이 있다면
+        새 구조의 게시글이므로 그대로 반환합니다.
+      */
+      if (post.topic && post.postType) {
+        return post;
+      }
+
+      /*
+        기존 카테고리를 새 주제로 바꾸기 위한 기본값입니다.
+      */
+      let convertedTopic = "기타";
+
+      /*
+        관광지, 문화시설, 여행코스는
+        새 구조에서 관광 주제로 합칩니다.
+      */
+      if (
+        post.category === "관광지" ||
+        post.category === "문화시설" ||
+        post.category === "여행코스"
+      ) {
+        convertedTopic = "관광";
+      }
+
+      /*
+        기존 데이터에 숙박 또는 맛집이 있다면
+        임시로 숙박 주제로 변환합니다.
+
+        음식점 JSON은 사용하지 않지만,
+        예전 localStorage에 맛집 게시글이 남아 있을 수 있어
+        오류 방지를 위해 포함합니다.
+      */
+      if (
+        post.category === "숙박" ||
+        post.category === "맛집"
+      ) {
+        convertedTopic = "숙박";
+      }
+
+      /*
+        기존 데이터에는 글 성격 정보가 없으므로
+        기본 글 성격을 자유로 설정합니다.
+      */
+      return {
+        ...post,
+        topic: convertedTopic,
+        postType: "자유"
+      };
+    });
+
+    /*
+      변환된 데이터를 다시 저장해서
+      다음부터는 새 구조를 그대로 사용합니다.
+    */
+    savePosts(convertedPosts);
+
+    return convertedPosts;
+  } catch (error) {
+    /*
+      localStorage 데이터가 손상되어 JSON 변환이 실패하면
+      오류를 콘솔에 출력하고 샘플 데이터를 사용합니다.
+    */
+    console.error(
+      "게시글 데이터를 불러오지 못했습니다.",
+      error
+    );
+
+    return [...SAMPLE_POSTS];
+  }
 }
 
 function savePosts(posts) {
@@ -80,35 +262,245 @@ function renderRecent() {
   `).join("");
 }
 
+/*
+==========================================================
+게시판 목록 출력 및 검색 기능
+
+검색 기준
+1. 제목 검색
+2. 주제 필터: 관광 / 숙박 / 기타 / 자유
+3. 글 성격 필터: 질문 / 후기 / 자유
+
+board.html의 다음 요소와 연결됩니다.
+
+data-board-body
+data-board-search
+data-board-topic
+data-board-post-type
+data-board-search-button
+==========================================================
+*/
 function initBoard() {
-  const body = document.querySelector("[data-board-body]");
-  const search = document.querySelector("[data-board-search]");
-  const category = document.querySelector("[data-board-category]");
-  const button = document.querySelector("[data-board-search-button]");
+  /*
+    게시글 목록이 들어갈 tbody 요소입니다.
+  */
+  const body = document.querySelector(
+    "[data-board-body]"
+  );
+
+  /*
+    게시글 제목 검색 입력창입니다.
+  */
+  const search = document.querySelector(
+    "[data-board-search]"
+  );
+
+  /*
+    게시글의 큰 분류인 주제 선택창입니다.
+
+    관광 / 숙박 / 기타 / 자유
+  */
+  const topicSelect = document.querySelector(
+    "[data-board-topic]"
+  );
+
+  /*
+    선택한 주제 안에서 글의 성격을 구분하는 선택창입니다.
+
+    질문 / 후기 / 자유
+  */
+  const postTypeSelect = document.querySelector(
+    "[data-board-post-type]"
+  );
+
+  /*
+    검색 조건을 적용하는 버튼입니다.
+  */
+  const button = document.querySelector(
+    "[data-board-search-button]"
+  );
+
+  /*
+    현재 페이지에 게시글 목록 영역이 없다면
+    이 함수를 더 이상 실행하지 않습니다.
+
+    app.js는 여러 HTML에서 함께 사용하기 때문에
+    해당 요소가 없는 페이지에서는 안전하게 종료해야 합니다.
+  */
   if (!body) return;
 
+  /*
+    현재 검색 조건에 맞는 게시글을 찾아
+    게시판 표에 출력하는 함수입니다.
+  */
   const draw = () => {
-    const keyword = search.value.trim().toLowerCase();
-    const selected = category.value;
+    /*
+      제목 검색어를 읽습니다.
+
+      검색창이 없을 가능성까지 고려해
+      optional chaining과 기본값을 사용합니다.
+    */
+    const keyword = (
+      search?.value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+    /*
+      선택된 주제를 가져옵니다.
+
+      빈 값이면 전체 주제를 뜻합니다.
+    */
+    const selectedTopic =
+      topicSelect?.value || "";
+
+    /*
+      선택된 글 성격을 가져옵니다.
+
+      빈 값이면 전체 글 성격을 뜻합니다.
+    */
+    const selectedPostType =
+      postTypeSelect?.value || "";
+
+    /*
+      localStorage에서 게시글을 불러옵니다.
+    */
     const posts = getPosts()
       .slice()
-      .sort((a,b) => b.id - a.id)
-      .filter(post => (!keyword || post.title.toLowerCase().includes(keyword)) && (!selected || post.category === selected));
 
-    body.innerHTML = posts.length ? posts.map(post => `
-      <tr>
-        <td class="number-col">${post.id}</td>
-        <td><a class="post-title" href="post-detail.html?id=${post.id}">${escapeHtml(post.title)}</a><div class="post-meta">${escapeHtml(post.category)}</div></td>
-        <td class="date-col">${post.createdAt}</td>
-      </tr>
-    `).join("") : `<tr><td colspan="3">검색 결과가 없습니다.</td></tr>`;
+      /*
+        게시글 ID가 큰 최신 글이 위로 오도록 정렬합니다.
+      */
+      .sort((a, b) => b.id - a.id)
+
+      /*
+        제목, 주제, 글 성격 조건을 모두 검사합니다.
+      */
+      .filter(post => {
+        /*
+          검색어가 없거나,
+          게시글 제목에 검색어가 포함되면 통과합니다.
+        */
+        const matchesKeyword =
+          !keyword ||
+          post.title
+            .toLowerCase()
+            .includes(keyword);
+
+        /*
+          주제가 선택되지 않았거나,
+          게시글 주제가 선택한 값과 같으면 통과합니다.
+        */
+        const matchesTopic =
+          !selectedTopic ||
+          post.topic === selectedTopic;
+
+        /*
+          글 성격이 선택되지 않았거나,
+          게시글 성격이 선택한 값과 같으면 통과합니다.
+        */
+        const matchesPostType =
+          !selectedPostType ||
+          post.postType === selectedPostType;
+
+        return (
+          matchesKeyword &&
+          matchesTopic &&
+          matchesPostType
+        );
+      });
+
+    /*
+      검색 결과가 있으면 게시글 행을 출력하고,
+      없으면 검색 결과가 없다는 문구를 출력합니다.
+    */
+    body.innerHTML = posts.length
+      ? posts.map(post => `
+          <tr>
+            <!-- 게시글 번호 -->
+            <td class="number-col">
+              ${post.id}
+            </td>
+
+            <!-- 게시글의 큰 주제 -->
+            <td>
+              ${escapeHtml(post.topic || "기타")}
+            </td>
+
+            <!-- 주제 안에서의 글 성격 -->
+            <td>
+              ${escapeHtml(post.postType || "자유")}
+            </td>
+
+            <!-- 게시글 제목과 상세 페이지 링크 -->
+            <td>
+              <a
+                class="post-title"
+                href="post-detail.html?id=${post.id}"
+              >
+                ${escapeHtml(post.title)}
+              </a>
+            </td>
+
+            <!-- 게시글 작성일 -->
+            <td class="date-col">
+              ${post.createdAt}
+            </td>
+          </tr>
+        `).join("")
+      : `
+          <tr>
+            <td colspan="5">
+              검색 결과가 없습니다.
+            </td>
+          </tr>
+        `;
   };
 
+  /*
+    게시판 페이지를 처음 열었을 때
+    전체 게시글을 한 번 출력합니다.
+  */
   draw();
-  button?.addEventListener("click", draw);
-  category?.addEventListener("change", draw);
-  search?.addEventListener("keydown", event => { if (event.key === "Enter") draw(); });
+
+  /*
+    검색 버튼 클릭 시 필터를 적용합니다.
+  */
+  button?.addEventListener(
+    "click",
+    draw
+  );
+
+  /*
+    주제를 변경하면 바로 결과를 다시 출력합니다.
+  */
+  topicSelect?.addEventListener(
+    "change",
+    draw
+  );
+
+  /*
+    글 성격을 변경하면 바로 결과를 다시 출력합니다.
+  */
+  postTypeSelect?.addEventListener(
+    "change",
+    draw
+  );
+
+  /*
+    제목 검색창에서 Enter 키를 눌러도
+    검색 버튼과 동일하게 작동합니다.
+  */
+  search?.addEventListener(
+    "keydown",
+    event => {
+      if (event.key === "Enter") {
+        draw();
+      }
+    }
+  );
 }
+
 
 function initDetail() {
   const title = document.querySelector("[data-detail-title]");
