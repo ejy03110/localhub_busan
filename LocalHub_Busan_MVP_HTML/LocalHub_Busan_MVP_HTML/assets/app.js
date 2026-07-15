@@ -404,6 +404,112 @@ async function renderFeaturedPlaces() {
   }
 }
 
+// =========================================================
+// 부산 현재 날씨 표시
+// Open-Meteo API 사용
+// =========================================================
+async function renderWeather() {
+  const temperatureTarget = document.querySelector(
+    "[data-weather-temperature]"
+  );
+
+  const descriptionTarget = document.querySelector(
+    "[data-weather-description]"
+  );
+
+  const rainTarget = document.querySelector(
+    "[data-weather-rain]"
+  );
+
+  const windTarget = document.querySelector(
+    "[data-weather-wind]"
+  );
+
+  // 날씨 카드가 없는 페이지에서는 실행하지 않습니다.
+  if (!temperatureTarget) return;
+
+  const latitude = 35.1796;
+  const longitude = 129.0756;
+
+  const url =
+    "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${latitude}` +
+    `&longitude=${longitude}` +
+    "&current=temperature_2m,precipitation,weather_code,wind_speed_10m" +
+    "&timezone=Asia%2FSeoul";
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("날씨 정보를 불러오지 못했습니다.");
+    }
+
+    const data = await response.json();
+    const current = data.current;
+
+    temperatureTarget.textContent =
+      `${Math.round(current.temperature_2m)}°`;
+
+    descriptionTarget.textContent =
+      getWeatherDescription(current.weather_code);
+
+    rainTarget.textContent =
+      `강수 ${current.precipitation}mm`;
+
+    windTarget.textContent =
+      `바람 ${current.wind_speed_10m}km/h`;
+
+  } catch (error) {
+    console.error("날씨 데이터 로딩 실패:", error);
+
+    descriptionTarget.textContent =
+      "현재 날씨를 불러오지 못했습니다.";
+
+    rainTarget.textContent = "강수 정보 없음";
+    windTarget.textContent = "바람 정보 없음";
+  }
+}
+// Open-Meteo 날씨 코드를 한국어 설명으로 변환합니다.
+function getWeatherDescription(code) {
+  if (code === 0) return "맑음";
+
+  if (code === 1) return "대체로 맑음";
+
+  if (code === 2) return "부분적으로 흐림";
+
+  if (code === 3) return "흐림";
+
+  if (code === 45 || code === 48) {
+    return "안개";
+  }
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return "이슬비";
+  }
+
+  if ([61, 63, 65, 66, 67].includes(code)) {
+    return "비";
+  }
+
+  if ([71, 73, 75, 77].includes(code)) {
+    return "눈";
+  }
+
+  if ([80, 81, 82].includes(code)) {
+    return "소나기";
+  }
+
+  if ([85, 86].includes(code)) {
+    return "눈 소나기";
+  }
+
+  if ([95, 96, 99].includes(code)) {
+    return "뇌우";
+  }
+
+  return "날씨 정보 확인 중";
+}
 /*
 ==========================================================
 게시판 목록 출력 및 검색 기능
@@ -1192,6 +1298,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRecent();
   renderFeaturedPlaces();
   renderStatistics();
+  renderWeather();
   initBoard();
   initDetail();
   initWrite();

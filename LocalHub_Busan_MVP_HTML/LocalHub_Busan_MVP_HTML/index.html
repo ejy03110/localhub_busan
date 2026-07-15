@@ -139,10 +139,20 @@
   </section>
 
   <section class="weather-card">
-    <small>부산 현재 날씨 · 데모</small>
-    <div class="weather-main">27°</div>
-    <strong>맑음, 해변 산책하기 좋아요</strong>
-    <div class="weather-row"><span>강수 20%</span><span>미세먼지 보통</span></div>
+    <small>부산 현재 날씨</small>
+
+    <div class="weather-main" data-weather-temperature>
+      --°
+    </div>
+
+    <strong data-weather-description>
+      날씨 정보를 불러오는 중입니다.
+    </strong>
+
+    <div class="weather-row">
+      <span data-weather-rain>강수 --mm</span>
+      <span data-weather-wind>바람 --km/h</span>
+    </div>
   </section>
 
 </main>
