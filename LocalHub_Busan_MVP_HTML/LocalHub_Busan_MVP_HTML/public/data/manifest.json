@@ -1,0 +1,41 @@
+{
+  "region": "부산",
+  "datasets": [
+    {
+      "contentType": "관광지",
+      "contentTypeId": 12,
+      "total": 351,
+      "file": "tourist-spots.json"
+    },
+    {
+      "contentType": "레포츠",
+      "contentTypeId": 28,
+      "total": 65,
+      "file": "leports.json"
+    },
+    {
+      "contentType": "문화시설",
+      "contentTypeId": 14,
+      "total": 123,
+      "file": "cultural-facilities.json"
+    },
+    {
+      "contentType": "쇼핑",
+      "contentTypeId": 38,
+      "total": 986,
+      "file": "shopping.json"
+    },
+    {
+      "contentType": "숙박",
+      "contentTypeId": 32,
+      "total": 140,
+      "file": "accommodations.json"
+    },
+    {
+      "contentType": "여행코스",
+      "contentTypeId": 25,
+      "total": 22,
+      "file": "travel-courses.json"
+    }
+  ]
+}

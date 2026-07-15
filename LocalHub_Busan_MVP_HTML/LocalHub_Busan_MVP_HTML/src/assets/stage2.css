@@ -1,0 +1,136 @@
+/* 2단계에서 아직 변환하지 않은 화면의 임시 안내 영역입니다. */
+.stage-placeholder {
+  max-width: 760px;
+  min-height: 52vh;
+  margin: 0 auto;
+  padding: 96px 24px;
+  text-align: center;
+}
+
+.stage-placeholder h1 {
+  margin: 12px 0 16px;
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  color: var(--navy);
+}
+
+.stage-placeholder p {
+  color: var(--muted);
+}
+
+.stage-badge {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--sky);
+  color: var(--blue-dark) !important;
+  font-weight: 800;
+}
+
+/* 원본 CSS의 홈 메뉴 고정 선택자를 Vue Router 구조에 맞게 무효화합니다. */
+.nav-link[href="index.html"] {
+  color: #4c596f;
+  background: transparent;
+}
+
+/* 키보드 포커스가 보이도록 공통 요소에 외곽선을 제공합니다. */
+.nav-link:focus-visible,
+.icon-btn:focus-visible,
+.chat-fab:focus-visible,
+.chat-close:focus-visible {
+  outline: 3px solid rgba(47, 111, 237, 0.35);
+  outline-offset: 2px;
+}
+
+/* 4단계 지역 탐색 화면 보완 스타일 */
+.explore-filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.explore-filter-actions .btn {
+  flex: 1;
+}
+
+.explore-reset-button {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.explore-map {
+  width: 100%;
+  height: 600px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.explore-map-info {
+  padding: 14px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .explore-map {
+    height: 440px;
+  }
+}
+
+/* 5단계 게시판 페이지네이션 비활성 버튼 */
+.page-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* 6단계: 폼 검증 및 예외 화면 보조 스타일 */
+.form-error {
+  margin: 7px 0 0;
+  color: #c62828;
+  font-size: 13px;
+  font-weight: 700;
+}
+.empty-state {
+  padding: 48px 28px;
+  text-align: center;
+}
+.empty-state .btn { margin-top: 18px; }
+button:disabled { cursor: not-allowed; opacity: 0.65; }
+
+
+/* 게시글 장소 지도 연결 */
+.optional-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.post-location-card {
+  display: flex;
+  gap: 16px;
+  margin: 0 28px 28px;
+  padding: 20px;
+  border: 1px solid #d8e3f2;
+  border-radius: 16px;
+  background: #f7faff;
+}
+
+.post-location-icon {
+  display: grid;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: #e7f0ff;
+  font-size: 22px;
+}
+
+.post-location-content { flex: 1; min-width: 0; }
+.post-location-content h2 { margin: 0 0 6px; font-size: 16px; }
+.post-location-content strong { display: block; font-size: 18px; }
+.post-location-note { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+.post-location-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+@media (max-width: 600px) {
+  .post-location-card { margin: 0 18px 22px; padding: 16px; }
+  .post-location-actions .btn { width: 100%; text-align: center; }
+}
