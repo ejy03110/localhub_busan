@@ -83,7 +83,7 @@
   <section class="section">
     <div class="section-head">
       <div>
-        <h2>📍 추천 장소</h2>
+        <h2>📍 추천 관광지</h2>
         <p>부산에서 많이 찾는 장소를 만나보세요.</p>
       </div>
 
@@ -97,20 +97,68 @@
   </section>
 
   <section class="section">
-    <div class="section-head"><div><h2>부산 정보 한눈에 보기</h2><p>제공 JSON 데이터를 기준으로 구성한 MVP 요약입니다.</p></div></div>
+    <div class="section-head">
+      <div>
+        <h2>부산 정보 한눈에 보기</h2>
+        <p>제공 JSON 데이터를 기준으로 구성한 MVP 요약입니다.</p>
+      </div>
+    </div>
     <div class="stat-grid">
-      <article class="stat-card"><div class="stat-icon">🏛️</div><div><span class="stat-value">46</span><span class="stat-label">관광지</span></div></article>
-      <article class="stat-card"><div class="stat-icon">🎭</div><div><span class="stat-value">26</span><span class="stat-label">문화시설</span></div></article>
-      <article class="stat-card"><div class="stat-icon">🎉</div><div><span class="stat-value">18</span><span class="stat-label">축제·행사</span></div></article>
-      <article class="stat-card"><div class="stat-icon">🍽️</div><div><span class="stat-value">46</span><span class="stat-label">맛집·쇼핑</span></div></article>
+      <article class="stat-card">
+        <div class="stat-icon">🏛️</div>
+        <div>
+          <span class="stat-value" data-stat="관광지">0</span>
+          <span class="stat-label">관광지</span>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">🎭</div>
+        <div>
+          <span class="stat-value" data-stat="문화시설">0</span>
+          <span class="stat-label">문화시설</span>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">🏨</div>
+        <div>
+          <span class="stat-value" data-stat="숙박">0</span>
+          <span class="stat-label">숙박</span>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon">🛍️</div>
+        <div>
+          <span class="stat-value" data-stat="쇼핑">0</span>
+          <span class="stat-label">쇼핑</span>
+        </div>
+      </article>
     </div>
   </section>
 
   <section class="weather-card">
-    <small>부산 현재 날씨 · 데모</small>
-    <div class="weather-main">27°</div>
-    <strong>맑음, 해변 산책하기 좋아요</strong>
-    <div class="weather-row"><span>강수 20%</span><span>미세먼지 보통</span></div>
+    <small>부산 현재 날씨</small>
+
+    <div class="weather-main">
+      <span data-weather-icon>🌤️</span>
+      <span data-weather-temperature>--°</span>
+    </div>
+
+    <strong data-weather-description>
+      날씨 정보를 불러오는 중입니다.
+    </strong>
+
+    <div class="weather-row">
+      <span data-weather-high>🔥최고: --°</span>
+      <span data-weather-low>❄️최저: --°</span>
+    </div>
+
+    <div class="weather-row">
+      <span data-weather-rain>🌧️강수 --mm</span>
+      <span data-weather-wind>💨바람 --km/h</span>
+    </div>
   </section>
 
 </main>

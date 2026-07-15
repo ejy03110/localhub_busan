@@ -299,6 +299,50 @@ function renderRecent() {
     .join("");
 }
 
+function initMobileMenu() {
+  const menuButton = document.querySelector(".mobile-nav-button");
+  const mainNav = document.querySelector(".main-nav");
+
+  if (!menuButton || !mainNav) return;
+
+  menuButton.addEventListener("click", () => {
+    mainNav.classList.toggle("open");
+
+    const isOpen = mainNav.classList.contains("open");
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+  });
+}
+
+// =========================================================
+// 메인 화면 통계 카드에 실제 JSON 개수를 표시
+// =========================================================
+async function renderStatistics() {
+
+  const files = [
+    ["관광지", "data/부산_관광지.json"],
+    ["문화시설", "data/부산_문화시설.json"],
+    ["숙박", "data/부산_숙박.json"],
+    ["쇼핑", "data/부산_쇼핑.json"]
+  ];
+
+  for (const [name, path] of files) {
+
+    try {
+      const response = await fetch(path);
+      const data = await response.json();
+
+      const target = document.querySelector(`[data-stat="${name}"]`);
+
+      if (target) {
+        target.textContent = (data.items || []).length;
+      }
+
+    } catch (error) {
+      console.error(`${name} 데이터 로딩 실패`, error);
+    }
+  }
+}
+
 async function renderFeaturedPlaces() {
   const target = document.querySelector("[data-featured-places]");
 
@@ -308,13 +352,14 @@ async function renderFeaturedPlaces() {
     const response = await fetch("data/부산_관광지.json");
 
     if (!response.ok) {
-      throw new Error("추천 장소 데이터를 불러오지 못했습니다.");
+      throw new Error("추천 관광지 데이터를 불러오지 못했습니다.");
     }
 
     const data = await response.json();
 
     const places = (data.items || [])
       .filter(place => place.firstimage || place.firstimage2)
+      .sort(() => Math.random() - 0.5)
       .slice(0, 4);
 
     target.innerHTML = places.map(place => {
@@ -353,7 +398,7 @@ async function renderFeaturedPlaces() {
                     target="_blank"
                     rel="noopener"
                   >
-                    지도에서 보기 →
+                    📍 지도 보기
                   </a>
                 `
                 : ""
@@ -367,10 +412,182 @@ async function renderFeaturedPlaces() {
 
     target.innerHTML = `
       <p class="notice">
-        추천 장소를 불러오지 못했습니다.
+        추천 관광지를 불러오지 못했습니다.
       </p>
     `;
   }
+}
+
+// =========================================================
+// 부산 현재 날씨 표시
+// Open-Meteo API 사용
+// =========================================================
+async function renderWeather() {
+  const temperatureTarget = document.querySelector(
+    "[data-weather-temperature]"
+  );
+
+  const descriptionTarget = document.querySelector(
+    "[data-weather-description]"
+  );
+
+  const rainTarget = document.querySelector(
+    "[data-weather-rain]"
+  );
+
+  const windTarget = document.querySelector(
+    "[data-weather-wind]"
+  );
+
+  const highTarget = document.querySelector(
+    "[data-weather-high]"
+  );
+
+  const lowTarget = document.querySelector(
+    "[data-weather-low]"
+  );
+
+  // 날씨 카드가 없는 페이지에서는 실행하지 않습니다.
+  if (!temperatureTarget) return;
+
+  const iconTarget = document.querySelector(
+    "[data-weather-icon]"
+  );  
+
+  const latitude = 35.1796;
+  const longitude = 129.0756;
+
+  const url =
+    "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${latitude}` +
+    `&longitude=${longitude}` +
+    "&current=temperature_2m,precipitation,weather_code,wind_speed_10m"
+    + "&daily=temperature_2m_max,temperature_2m_min"
+    "&timezone=Asia%2FSeoul";
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("날씨 정보를 불러오지 못했습니다.");
+    }
+
+    const data = await response.json();
+    const current = data.current;
+
+    temperatureTarget.textContent =
+      `${Math.round(current.temperature_2m)}°`;
+
+    descriptionTarget.textContent =
+      getWeatherDescription(current.weather_code);
+
+    iconTarget.textContent = 
+    getWeatherIcon(current.weather_code);
+
+    rainTarget.textContent =
+      `🌧️강수 ${current.precipitation}mm`;
+
+    windTarget.textContent =
+      `💨바람 ${current.wind_speed_10m}km/h`;
+
+    highTarget.textContent =
+      `🔥최고: ${Math.round(data.daily.temperature_2m_max[0])}°`;
+
+    lowTarget.textContent =
+      `❄️최저: ${Math.round(data.daily.temperature_2m_min[0])}°`;
+
+  } catch (error) {
+    console.error("날씨 데이터 로딩 실패:", error);
+
+    descriptionTarget.textContent =
+      "현재 날씨를 불러오지 못했습니다.";
+
+    rainTarget.textContent = "강수 정보 없음";
+    windTarget.textContent = "바람 정보 없음";
+  }
+}
+// Open-Meteo 날씨 코드를 한국어 설명으로 변환합니다.
+function getWeatherDescription(code) {
+  if (code === 0) return "맑음";
+
+  if (code === 1) return "대체로 맑음";
+
+  if (code === 2) return "부분적으로 흐림";
+
+  if (code === 3) return "흐림";
+
+  if (code === 45 || code === 48) {
+    return "안개";
+  }
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return "이슬비";
+  }
+
+  if ([61, 63, 65, 66, 67].includes(code)) {
+    return "비";
+  }
+
+  if ([71, 73, 75, 77].includes(code)) {
+    return "눈";
+  }
+
+  if ([80, 81, 82].includes(code)) {
+    return "소나기";
+  }
+
+  if ([85, 86].includes(code)) {
+    return "눈 소나기";
+  }
+
+  if ([95, 96, 99].includes(code)) {
+    return "뇌우";
+  }
+
+  return "날씨 정보 확인 중";
+}
+
+// 날씨 코드에 따라 아이콘을 반환합니다.
+function getWeatherIcon(code) {
+  if (code === 0) return "☀️";
+
+  if (code === 1 || code === 2) {
+    return "🌤️";
+  }
+
+  if (code === 3) {
+    return "☁️";
+  }
+
+  if (code === 45 || code === 48) {
+    return "🌫️";
+  }
+
+  if (
+    [51, 53, 55, 56, 57].includes(code)
+  ) {
+    return "🌦️";
+  }
+
+  if (
+    [61, 63, 65, 66, 67, 80, 81, 82].includes(code)
+  ) {
+    return "🌧️";
+  }
+
+  if (
+    [71, 73, 75, 77, 85, 86].includes(code)
+  ) {
+    return "❄️";
+  }
+
+  if (
+    [95, 96, 99].includes(code)
+  ) {
+    return "⛈️";
+  }
+
+  return "🌤️";
 }
 
 /*
@@ -1160,9 +1377,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initChat();
   renderRecent();
   renderFeaturedPlaces();
+  renderStatistics();
+  renderWeather();
   initBoard();
   initDetail();
   initWrite();
   initMapFilters();
   initExplore(); 
+  initMobileMenu();
 });
