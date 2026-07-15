@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>부산 지역 탐색 | LocalHub</title>
   <!-- Leaflet CSS & JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -27,50 +27,65 @@
   </div>
 </header>
 
-
 <main class="page" id="main">
   <div class="breadcrumb">홈 &gt; 부산 &gt; 지역 탐색</div>
   <div class="page-heading">
-    <div><h1>부산 지역 탐색</h1><p>관광지, 문화시설, 축제, 맛집을 지도에서 확인하세요.</p></div>
+    <div>
+      <h1>부산 지역 탐색</h1>
+      <p>관광지, 문화시설, 축제·행사, 레포츠, 쇼핑, 숙박을 지도에서 확인하세요.</p>
+    </div>
   </div>
-  <div class="notice">이 화면은 선택 기능인 지도 시각화를 반영한 정적 UI 프로토타입입니다. 실제 구현에서는 제공 JSON의 위·경도 데이터를 Leaflet.js에 연결합니다.</div>
 
   <div class="explore-layout">
+    <!-- 필터 패널 -->
     <aside class="panel filter-panel">
+      <!-- 카테고리 필터 -->
       <div class="filter-group">
         <h3>카테고리</h3>
         <div class="checkbox-list">
           <label><input type="checkbox" value="관광지" data-map-filter checked> 관광지</label>
-<label><input type="checkbox" value="문화시설" data-map-filter checked> 문화시설</label>
-<label><input type="checkbox" value="축제" data-map-filter checked> 축제·행사</label>
-<label><input type="checkbox" value="맛집" data-map-filter checked> 모범음식점</label>
-<label><input type="checkbox" value="레포츠" data-map-filter> 레포츠</label>
-<label><input type="checkbox" value="쇼핑" data-map-filter> 쇼핑</label>
-<label><input type="checkbox" value="숙박" data-map-filter> 숙박</label>
+          <label><input type="checkbox" value="문화시설" data-map-filter checked> 문화시설</label>
+          <label><input type="checkbox" value="축제" data-map-filter checked> 축제·행사</label>
+          <label><input type="checkbox" value="레포츠" data-map-filter checked> 레포츠</label>
+          <label><input type="checkbox" value="쇼핑" data-map-filter checked> 쇼핑</label>
+          <label><input type="checkbox" value="숙박" data-map-filter checked> 숙박</label>
         </div>
       </div>
+
+      <!-- 지역 필터 -->
       <div class="filter-group">
-        <h3>지역</h3>
-        <select><option>부산 전체</option><option>서면구</option><option>수영구</option><option>해운대구</option><option>영도구</option></select>
+        <label for="region-select">지역</label>
+        <select id="region-select">
+          <option value="부산 전체">부산 전체</option>
+          <option value="서면구">서면구</option>
+          <option value="수영구">수영구</option>
+          <option value="해운대구">해운대구</option>
+          <option value="영도구">영도구</option>
+        </select>
       </div>
+
+      <!-- 검색 필터 -->
       <div class="filter-group">
-        <h3>검색</h3>
-        <input class="input" placeholder="장소명을 입력하세요">
+        <label for="search-input">검색</label>
+        <input id="search-input" class="input" type="text" placeholder="장소명을 입력하세요">
       </div>
+
+      <!-- 필터 버튼 -->
       <div style="display: flex; gap: 8px;">
-  <button class="btn btn-primary" type="button" style="flex: 1;">필터 적용</button>
-  <button class="btn" type="button" style="flex: 1; background: #f0f0f0; color: #333;" id="reset-filter">초기화</button>
-</div>
+        <button class="btn btn-primary" id="apply-filter" type="button" style="flex: 1;">필터 적용</button>
+        <button class="btn" id="reset-filter" type="button" style="flex: 1; background: #f0f0f0; color: #333;">초기화</button>
+      </div>
     </aside>
 
+    <!-- 지도 패널 -->
     <section class="panel map-panel">
-  <div id="explore-map" style="width: 100%; height: 600px; border-radius: 16px; overflow: hidden;"></div>
-  <div style="padding:14px 20px;color:var(--muted);font-size:14px" data-map-info>관광지, 문화시설, 축제, 맛집 카테고리를 지도에 표시 중입니다.</div>
-</section>
+      <div id="explore-map" style="width: 100%; height: 600px; border-radius: 16px; overflow: hidden;"></div>
+      <div style="padding:14px 20px;color:var(--muted);font-size:14px" data-map-info>관광지, 문화시설, 축제·행사, 레포츠, 쇼핑, 숙박을 지도에 표시 중입니다.</div>
+    </section>
   </div>
 </main>
 
-
+<!-- 챗봇 -->
 <button class="chat-fab" type="button" data-chat-toggle aria-label="LocalHub 챗봇 열기">💬</button>
 <section class="chat-panel" data-chat-panel aria-label="LocalHub 챗봇">
   <header class="chat-head">
@@ -86,7 +101,6 @@
   </form>
 </section>
 
-
 <footer class="app-footer">
   <div class="footer-inner">
     <span>© 2026 LocalHub · 부산 지역 정보 공유 커뮤니티</span>
@@ -95,5 +109,17 @@
 </footer>
 
 <script src="assets/app.js"></script>
+<script>
+  // initExplore가 완료된 후 필터 자동 적용
+  document.addEventListener('DOMContentLoaded', () => {
+    // initExplore 실행 후 약간의 시간 대기
+    setTimeout(() => {
+      const filterBtn = document.getElementById('apply-filter');
+      if (filterBtn) {
+        filterBtn.click();
+      }
+    }, 100);
+  });
+</script>
 </body>
 </html>
