@@ -85,7 +85,7 @@
   </div>
 </main>
 
-<!-- 챗봇 -->
+<!-- 챗봇 -->`
 <button class="chat-fab" type="button" data-chat-toggle aria-label="LocalHub 챗봇 열기">💬</button>
 <section class="chat-panel" data-chat-panel aria-label="LocalHub 챗봇">
   <header class="chat-head">
@@ -109,17 +109,5 @@
 </footer>
 
 <script src="assets/app.js"></script>
-<script>
-  // initExplore가 완료된 후 필터 자동 적용
-  document.addEventListener('DOMContentLoaded', () => {
-    // initExplore 실행 후 약간의 시간 대기
-    setTimeout(() => {
-      const filterBtn = document.getElementById('apply-filter');
-      if (filterBtn) {
-        filterBtn.click();
-      }
-    }, 100);
-  });
-</script>
 </body>
 </html>

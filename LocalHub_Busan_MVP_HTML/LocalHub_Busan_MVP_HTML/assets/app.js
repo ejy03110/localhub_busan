@@ -19,6 +19,10 @@
 기본 비밀번호는 교육용 테스트를 위해 1234로 설정합니다.
 ==========================================================
 */
+
+// 챗봇 검색 결과를 저장하는 전역 변수
+let chatbotSearchResults = [];
+
 const SAMPLE_POSTS = [
   {
     id: 6,
@@ -90,6 +94,7 @@ localStorage에서 게시글 목록을 가져오는 함수
 새 게시글은 topic과 postType을 사용하므로,
 오래된 데이터를 자동으로 새 구조로 변환합니다.
 ==========================================================
+
 */
 function getPosts() {
   /*
@@ -211,6 +216,126 @@ function getId() {
   return Number(new URLSearchParams(location.search).get("id"));
 }
 
+// ===== 챗봇 검색 결과 저장/로드 함수 =====
+function saveChatbotSearchResults(places) {
+  localStorage.setItem("chatbotSearchResults", JSON.stringify(places));
+}
+
+function getChatbotSearchResults() {
+  try {
+    return JSON.parse(localStorage.getItem("chatbotSearchResults") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function clearChatbotSearchResults() {
+  localStorage.removeItem("chatbotSearchResults");
+}
+
+// ===== 챗봇 JSON 데이터 검색 =====
+let cachedPlacesData = null; // 로드된 데이터 캐싱
+
+// 모든 JSON 파일 로드 (한 번만 로드)
+async function loadPlacesData() {
+  if (cachedPlacesData) return cachedPlacesData;
+
+  const files = {
+    "관광지": "data/부산_관광지.json",
+    "문화시설": "data/부산_문화시설.json",
+    "축제·행사": "data/부산_축제공연행사.json",
+    "레포츠": "data/부산_레포츠.json",
+    "쇼핑": "data/부산_쇼핑.json",
+    "숙박": "data/부산_숙박.json"
+  };
+
+  const data = {};
+  try {
+    for (const [category, path] of Object.entries(files)) {
+      const response = await fetch(path);
+      const json = await response.json();
+      data[category] = (json.items || []).slice(0, 100); // 성능상 100개만
+    }
+    cachedPlacesData = data;
+    return data;
+  } catch (error) {
+    console.error("JSON 로딩 오류:", error);
+    return data;
+  }
+}
+
+// 사용자 입력에서 카테고리 감지
+function detectCategory(text) {
+  const categoryKeywords = {
+    "관광지": ["관광지", "여행", "명소", "볼거리", "경치", "경관"],
+    "축제·행사": ["축제", "행사", "공연", "이벤트", "콘서트", "전시"],
+    "문화시설": ["문화시설", "박물관", "미술관", "전시", "갤러리", "극장"],
+    "레포츠": ["레포츠", "운동", "스포츠", "마라톤", "서핑", "골프"],
+    "쇼핑": ["쇼핑", "쇼핑몰", "백화점", "마켓", "시장", "음식"],
+    "숙박": ["숙박", "호텔", "펜션", "에어비앤비", "숙소", "묵을", "묵을"]
+  };
+
+  const lowerText = text.toLowerCase();
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    if (keywords.some(kw => lowerText.includes(kw))) {
+      return category;
+    }
+  }
+  return null;
+}
+
+// 장소 검색 (카테고리 + 키워드)
+// 장소 검색 (카테고리 + 키워드) - 랜덤 5개 반환
+async function searchPlaces(category, keyword) {
+  const data = await loadPlacesData();
+  let places = data[category] || [];
+
+  // 카테고리명 자체로 검색하면 필터링 안 함 (전체 반환)
+  const categoryNames = Object.keys(data);
+  const isJustCategory = categoryNames.includes(keyword.trim());
+
+  if (keyword && !isJustCategory) {
+    places = places.filter(place =>
+      place.title.toLowerCase().includes(keyword.toLowerCase()) ||
+      place.addr1.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }
+
+  // Fisher-Yates 셔플 알고리즘 (랜덤화)
+  const shuffle = (arr) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const shuffled = shuffle(places);
+  return shuffled.slice(0, 5); // 랜덤 5개 반환
+}
+
+// 장소 정보를 보기 좋은 형식으로 포맷
+function formatPlaceInfo(place) {
+  const tel = place.tel ? `📞 ${place.tel}\n` : "";
+  const addr = place.addr1 ? `📍 ${place.addr1}` : "";
+  return `🏢 <strong>${escapeHtml(place.title)}</strong>\n${tel}${addr}`;
+}
+
+// 장소명으로 게시글 검색 (3개까지)
+function searchPostsByPlace(placeName) {
+  const posts = getPosts();
+  const lowerPlace = placeName.toLowerCase().replace(/\s+/g, "");
+  
+  return posts
+    .filter(post => {
+      const titleMatch = post.title.toLowerCase().replace(/\s+/g, "").includes(lowerPlace);
+      const contentMatch = post.content.toLowerCase().includes(placeName.toLowerCase());
+      return titleMatch || contentMatch;
+    })
+    .slice(0, 3); // 최대 3개
+}
+
 function initChat() {
   const toggles = document.querySelectorAll("[data-chat-toggle]");
   const panel = document.querySelector("[data-chat-panel]");
@@ -233,16 +358,49 @@ function initChat() {
     body.insertAdjacentHTML("beforeend", `<div class="message user">${escapeHtml(text)}</div>`);
     input.value = "";
 
-    setTimeout(() => {
-      let answer = "부산 지역 관광지, 축제, 맛집, 여행 코스 또는 커뮤니티 게시글을 질문해 주세요.";
-      if (text.includes("축제")) answer = "부산 바다축제 등 7월 행사 일정은 축제 캘린더 화면에서 날짜별로 확인할 수 있습니다.";
-      else if (text.includes("맛집") || text.includes("음식")) answer = "지도 화면에서 맛집 필터를 선택하면 부산 모범음식점 위치를 확인할 수 있습니다.";
-      else if (text.includes("게시글")) answer = "커뮤니티 게시판에서 제목 검색을 지원합니다.";
-      else if (text.includes("관광") || text.includes("추천")) answer = "해운대해수욕장, 감천문화마을, 광안리해수욕장, 태종대 등 목적별 장소를 지도에서 탐색해 보세요.";
+      setTimeout(async () => {
+  let answer = "부산 지역 관광지, 축제·행사, 문화시설, 레포츠, 쇼핑, 숙박을 질문해 주세요.";
+  
+  const category = detectCategory(text);
+if (category) {
+  // 카테고리명 제거 후 의미있는 키워드만 추출 (길이 3 이상)
+  const remaining = text.replace(category, "").trim();
+  const keyword = remaining.split(/\s+/).filter(w => w.length >= 3).join(" ");
+  const places = await searchPlaces(category, keyword);
+  console.log("검색:", {category, keyword, places: places.length}); // 디버깅용
+    saveChatbotSearchResults(places);
+    chatbotSearchResults = places;
+        if (places.length > 0) {
+  const placeList = await Promise.all(places.map(async p => {
+    const relatedPosts = searchPostsByPlace(p.title);
+    let placeHtml = `🏢 <strong>${escapeHtml(p.title)}</strong>`;
+    
+    if (p.tel) placeHtml += `<br>📞 ${escapeHtml(p.tel)}`;
+    if (p.addr1) placeHtml += `<br>📍 ${escapeHtml(p.addr1)}`;
+    
+    // 관련 게시글 추가
+    if (relatedPosts.length > 0) {
+      placeHtml += `<div class="related-posts">💬 이 장소 후기:`;
+      relatedPosts.forEach(post => {
+        placeHtml += `<br><a href="post-detail.html?id=${post.id}" class="post-link">· ${escapeHtml(post.title)}</a>`;
+      });
+      placeHtml += `</div>`;
+    }
+    
+    return placeHtml;
+  }));
+  
+  answer = `🔍 <strong>${text}</strong> 검색 결과:<br><br>${placeList.join("<br><br>")}`;
+} else {
+  answer = `죄송합니다. "${text}" 검색 결과가 없습니다. 다른 키워드를 시도해 보세요.`;
+}
+  } else if (text.includes("게시글")) {
+    answer = "커뮤니티 게시판에서 제목 검색을 지원합니다.";
+  }
 
-      body.insertAdjacentHTML("beforeend", `<div class="message bot">${answer}</div>`);
-      body.scrollTop = body.scrollHeight;
-    }, 400);
+  body.insertAdjacentHTML("beforeend", `<div class="message bot">${answer}</div>`);
+  body.scrollTop = body.scrollHeight;
+}, 400);
   });
 }
 
@@ -1113,17 +1271,28 @@ async function initExplore() {
   
   if (!filterBtn) return;
   
-  // 초기 지도 표시
+  // 지도 초기화
+  if (!exploreMap) {
+    initExploreMap();
+  }
+  
+  // 챗봇 검색 결과 확인
+  const chatResults = getChatbotSearchResults();
+  if (chatResults.length > 0) {
+    renderMapMarkers(chatResults);
+    mapInfo.textContent = `챗봇 검색 결과: ${chatResults.length}개 장소`;
+    clearChatbotSearchResults();
+    return;  // ← 중요! 여기서 끝
+  }
+  
+  // 초기 데이터 표시
   try {
-    if (!exploreMap) {
-      initExploreMap();
-      const allPlaces = await loadAllPlaces();
-      if (allPlaces.length > 0) {
-        renderMapMarkers(allPlaces.slice(0, 50));
-      }
+    const allPlaces = await loadAllPlaces();
+    if (allPlaces.length > 0) {
+      renderMapMarkers(allPlaces);
     }
   } catch (e) {
-    console.error("지도 초기화 오류:", e);
+    console.error("초기 지도 로딩 오류:", e);
   }
   
   // 필터링 함수 정의
@@ -1142,7 +1311,6 @@ async function initExplore() {
       const matchesCategory = selectedCategories.includes(place.contenttypeid);
       const matchesSearch = !searchKeyword || place.title.includes(searchKeyword);
       
-      // 지역 필터링
       let matchesRegion = true;
       if (targetDistrict) {
         const district = extractDistrictFromAddr(place.addr1);
@@ -1160,10 +1328,9 @@ async function initExplore() {
       : "검색 결과가 없습니다.";
   };
 
-  // 필터 버튼 클릭 이벤트
+  // 이벤트 연결
   filterBtn.addEventListener("click", applyFilter);
 
-  // Enter 키 지원
   searchInput.addEventListener("keydown", event => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -1171,10 +1338,8 @@ async function initExplore() {
     }
   });
 
-  // 지역 드롭다운 변경 이벤트
   regionSelect?.addEventListener("change", applyFilter);
 
-  // 초기화 버튼 이벤트
   if (resetBtn) {
     resetBtn.addEventListener("click", async () => {
       checkboxes.forEach(cb => cb.checked = true);
