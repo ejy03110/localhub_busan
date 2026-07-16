@@ -1778,11 +1778,11 @@ textarea {
 }
 
 .explore-map-info {
-  position: static;  /* absolute → static */
+  position: static;
   margin: 20px 0;
   padding: 18px;
   border-radius: 16px;
-  background: rgba(255,255,255,.96);
+  background: rgba(255, 255, 255, 0.96);
   color: inherit;
   display: flex;
   justify-content: space-between;
@@ -1792,7 +1792,7 @@ textarea {
 }
 
 .page {
-  padding: 28px 24px 88px;  /* 150px → 88px (원래대로) */
+  padding: 28px 24px 88px;
 }
 
 .filter-panel {
@@ -1800,9 +1800,9 @@ textarea {
 }
 
 .explore-filter-actions {
+  display: flex;
   gap: 12px;
   margin-top: 20px;
-  display: flex;
 }
 
 .explore-filter-actions .btn {
@@ -1820,4 +1820,159 @@ textarea {
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* =========================================================
+   푸터 라이선스
+   ========================================================= */
+
+.footer-license {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  font-size: 12px;
+  color: #9aa3b2;
+}
+
+.footer-license strong {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .footer-license {
+    margin-top: 12px;
+    text-align: left;
+  }
+}
+
+/* =========================================================
+   오늘의 부산 추천
+   ========================================================= */
+
+.today-place-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+
+  width: 100%;
+  padding: 20px 30px;
+
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+.today-place-card img {
+  width: 300px;
+  height: 220px;
+
+  object-fit: cover;
+  border-radius: 18px;
+  flex-shrink: 0;
+}
+
+.today-place-content {
+  width: min(100%, 620px);
+  flex: 0 1 620px;
+}
+
+.today-place-content .badge {
+  margin-bottom: 8px;
+}
+
+.today-place-content h3 {
+  margin: 6px 0 8px;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.today-place-message {
+  margin: 6px 0 12px;
+  color: #2563eb;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.today-place-reasons {
+  margin: 10px 0;
+}
+
+.today-place-reasons strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.today-place-reasons ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.today-place-reasons li {
+  margin: 6px 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.today-place-content > p:last-of-type {
+  margin-top: 10px;
+  margin-bottom: 14px;
+  color: #777;
+  font-size: 15px;
+}
+
+.today-place-content .btn {
+  padding: 12px 24px;
+}
+
+/* =========================================================
+   오늘의 부산 추천 - 모바일
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .today-place-card {
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px;
+    text-align: left;
+  }
+
+  .today-place-card img {
+    width: 100%;
+    height: 180px;
+  }
+
+  .today-place-content {
+    width: 100%;
+  }
+
+  .today-place-content h3 {
+    font-size: 28px;
+  }
+
+  .today-place-message {
+    font-size: 14px;
+  }
+
+  .today-place-reasons strong {
+    font-size: 14px;
+  }
+
+  .today-place-reasons li {
+    font-size: 13px;
+  }
+
+  .today-place-content > p:last-of-type {
+    font-size: 13px;
+  }
+
+  .today-place-content .btn {
+    width: 100%;
+  }
+}
 }

@@ -4,7 +4,13 @@ import { getPosts } from '../composables/usePosts';
 
 const posts = ref([]);
 const featuredPlaces = ref([]);
+const todayPlace = ref(null);
+const recommendationMessage = ref('');
+const recommendationReasons = ref([]);
+const tourismPlaces = ref([]);
 const placeError = ref('');
+
+const currentWeatherCode = ref(null);
 
 const stats = ref({
   관광지: 0,
@@ -27,11 +33,6 @@ const weather = ref({
  * 게시글을 최신순으로 정렬한 뒤
  * 홈 화면에 3개만 표시합니다.
  */
-const recentPosts = computed(() => {
-  return [...posts.value]
-    .sort((a, b) => Number(b.id) - Number(a.id))
-    .slice(0, 3);
-});
 
 const popularPosts = computed(() =>
   [...posts.value]
@@ -83,14 +84,100 @@ async function loadHomeData() {
       숙박: lodging.items?.length ?? 0,
       쇼핑: shopping.items?.length ?? 0,
     };
+featuredPlaces.value = (tourism.items || [])
+  .filter((place) => place.firstimage || place.firstimage2)
+  .slice(0, 4);
 
-    featuredPlaces.value = (tourism.items || [])
-      .filter((place) => place.firstimage || place.firstimage2)
-      .slice(0, 4);
+tourismPlaces.value = (tourism.items || []).filter(
+  (place) => place.firstimage || place.firstimage2
+);
+
+pickRandomPlace();
   } catch (error) {
     console.error(error);
     placeError.value = '추천 관광지를 불러오지 못했습니다.';
   }
+}
+
+function pickRandomPlace() {
+  if (tourismPlaces.value.length === 0) return;
+
+  const rainyCodes = [
+    51, 53, 55, 56, 57,
+    61, 63, 65, 66, 67,
+    71, 73, 75, 77,
+    80, 81, 82,
+    95, 96, 99,
+  ];
+
+  const isRainy = rainyCodes.includes(currentWeatherCode.value);
+
+  const indoorKeywords = [
+    '박물관',
+    '미술관',
+    '문화회관',
+    '영화',
+    '전시',
+    '체험관',
+    '아쿠아리움',
+    '센터',
+    '기념관',
+  ];
+
+  const outdoorKeywords = [
+    '공원',
+    '해수욕장',
+    '전망대',
+    '마을',
+    '섬',
+    '산',
+    '해변',
+    '수목원',
+    '둘레길',
+  ];
+
+  const filteredPlaces = tourismPlaces.value.filter((place) => {
+    const source = `${place.title || ''} ${place.addr1 || ''}`;
+
+    const keywords = isRainy
+      ? indoorKeywords
+      : outdoorKeywords;
+
+    return keywords.some((keyword) => source.includes(keyword));
+  });
+
+  const candidates =
+    filteredPlaces.length > 0
+      ? filteredPlaces
+      : tourismPlaces.value;
+
+  const randomIndex = Math.floor(
+    Math.random() * candidates.length
+  );
+
+  todayPlace.value = candidates[randomIndex];
+
+  if (isRainy) {
+  recommendationMessage.value =
+    '🌧️ 비 오는 날에도 편하게 즐길 수 있는 장소를 추천해드려요.';
+} else {
+  recommendationMessage.value =
+    '☀️ 오늘은 야외 활동하기 좋은 날! 이런 장소는 어떠세요?';
+}
+recommendationReasons.value = [];
+const title = todayPlace.value.title || '';
+
+if (isRainy) {
+  recommendationReasons.value = [
+    '☂️ 비 오는 날에도 부담 없이 방문하기 좋은 장소입니다.',
+    '🏠 실내 또는 비를 피하며 즐길 수 있는 장소를 우선 추천했습니다.',
+  ];
+} else {
+  recommendationReasons.value = [
+    '☀️ 오늘은 야외 활동을 즐기기 좋은 날입니다.',
+    '📍 부산의 다양한 매력을 느낄 수 있는 관광지를 추천했습니다.',
+  ];
+}
 }
 
 function getWeatherDescription(code) {
@@ -147,6 +234,8 @@ async function loadWeather() {
     const response = await fetch(url);
     const data = await response.json();
     const current = data.current;
+
+currentWeatherCode.value = current.weather_code;
 
     weather.value = {
       icon: getWeatherIcon(current.weather_code),
@@ -230,10 +319,14 @@ onActivated(loadPosts);
     </div>
 
     <div class="community-card-grid">
-      <RouterLink 
-        v-for="post in popularPosts" 
-        :key="post.id" 
+
+
+      <RouterLink
+        v-for="post in popularPosts"
+        :key="post.id"
         class="community-card"
+        :class="{ 'community-card-no-image': !post.image }"
+
         :to="`/posts/${post.id}`"
       >
         <div class="community-card-content">
@@ -330,6 +423,62 @@ onActivated(loadPosts);
         {{ placeError }}
       </p>
     </div>
+  </section>
+
+  <section v-if="todayPlace" class="section today-place-section">
+    <div class="section-head">
+      <div>
+        <h2>🎲 오늘의 부산 추천</h2>
+        <p>오늘은 이런 장소는 어떠세요?</p>
+      </div>
+
+      <button
+        class="btn btn-ghost"
+        @click="pickRandomPlace"
+      >
+        🔄 다시 추천
+      </button>
+    </div>
+
+    <article class="today-place-card">
+      <img
+        :src="todayPlace.firstimage2 || todayPlace.firstimage"
+        :alt="todayPlace.title"
+      >
+
+      <div class="today-place-content">
+        <span class="badge">추천 관광지</span>
+
+      <h3>{{ todayPlace.title }}</h3>
+
+      <p class="today-place-message">
+        {{ recommendationMessage }}
+      </p>
+
+      <div class="today-place-reasons">
+        <strong>추천 이유</strong>
+
+        <ul>
+          <li
+            v-for="reason in recommendationReasons"
+            :key="reason"
+          >
+            {{ reason }}
+          </li>
+        </ul>
+      </div>
+
+      <p>
+        {{ todayPlace.addr1 }}
+      </p>
+        <RouterLink
+          class="btn btn-primary"
+          :to="`/explore?q=${encodeURIComponent(todayPlace.title)}`"
+        >
+          자세히 보기
+        </RouterLink>
+      </div>
+    </article>
   </section>
 
   <section class="section">

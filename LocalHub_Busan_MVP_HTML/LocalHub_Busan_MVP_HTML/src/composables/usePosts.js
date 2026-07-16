@@ -82,13 +82,40 @@ export const SAMPLE_POSTS = [
 ];
 
 function normalizeTopic(post) {
-  const validTopics = ['숙박', '관광', '기타'];
-  return validTopics.includes(post.topic) ? post.topic : '기타';
+  const validTopics = ['숙박', '관광', '맛집', '기타'];
+
+  if (post.topic) {
+    const normalizedTopic =
+      post.topic === '자유' ? '기타' : post.topic;
+
+    return validTopics.includes(normalizedTopic)
+      ? normalizedTopic
+      : '기타';
+  }
+
+  if (
+    ['관광지', '문화시설', '여행코스', '관광'].includes(post.category)
+  ) {
+    return '관광';
+  }
+
+  if (post.category === '숙박') return '숙박';
+  if (post.category === '맛집') return '맛집';
+
+  return '기타';
 }
 
 function normalizePostType(post) {
   const validTypes = ['질문', '후기', '기타'];
-  return validTypes.includes(post.postType) ? post.postType : '기타';
+
+  const normalizedType =
+    post.postType === '자유'
+      ? '기타'
+      : post.postType;
+
+  return validTypes.includes(normalizedType)
+    ? normalizedType
+    : '기타';
 }
 
 function normalizePost(post) {
