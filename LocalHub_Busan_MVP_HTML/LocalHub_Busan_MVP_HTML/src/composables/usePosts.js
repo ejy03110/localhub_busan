@@ -1,3 +1,5 @@
+const STORAGE_KEY = 'localhub-mvp-posts';
+
 export const SAMPLE_POSTS = [
   {
     id: 6,
@@ -9,6 +11,8 @@ export const SAMPLE_POSTS = [
     postType: '질문',
     place: '해운대',
     image: '/images/posts/post-6-haeundae-hotel.jpg',
+    likes: 23,
+    views: 145,
   },
   {
     id: 5,
@@ -20,6 +24,8 @@ export const SAMPLE_POSTS = [
     postType: '후기',
     place: '광안리',
     image: '/images/posts/post-5-gwangalli-night.jpg',
+    likes: 18,
+    views: 117,
   },
   {
     id: 4,
@@ -29,7 +35,10 @@ export const SAMPLE_POSTS = [
     createdAt: '2026-07-12',
     topic: '관광',
     postType: '질문',
+    place: '',
     image: '/images/posts/post-4-indoor-place.jpg',
+    likes: 13,
+    views: 89,
   },
   {
     id: 3,
@@ -41,6 +50,8 @@ export const SAMPLE_POSTS = [
     postType: '후기',
     place: '감천문화마을',
     image: '/images/posts/post-3-gamcheon.jpg',
+    likes: 11,
+    views: 72,
   },
   {
     id: 2,
@@ -50,7 +61,10 @@ export const SAMPLE_POSTS = [
     createdAt: '2026-07-10',
     topic: '기타',
     postType: '기타',
+    place: '',
     image: '/images/posts/post-2-busan-transport.jpg',
+    likes: 8,
+    views: 64,
   },
   {
     id: 1,
@@ -60,6 +74,121 @@ export const SAMPLE_POSTS = [
     createdAt: '2026-07-09',
     topic: '기타',
     postType: '기타',
+    place: '',
     image: '/images/posts/post-1-busan-view.jpg',
+    likes: 6,
+    views: 51,
   },
 ];
+
+function normalizePost(post) {
+  return {
+    ...post,
+    id: Number(post.id),
+    title: post.title || '',
+    content: post.content || '',
+    password: post.password || '',
+    createdAt: post.createdAt || '',
+    topic: post.topic || '기타',
+    postType: post.postType || '기타',
+    place: post.place || '',
+    image: post.image || '',
+    likes: Number(post.likes || 0),
+    views: Number(post.views || 0),
+  };
+}
+
+function savePosts(posts) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(posts.map(normalizePost)),
+  );
+}
+
+export function getPosts() {
+  const savedPosts = localStorage.getItem(STORAGE_KEY);
+
+  if (!savedPosts) {
+    savePosts(SAMPLE_POSTS);
+    return SAMPLE_POSTS.map(normalizePost);
+  }
+
+  try {
+    const parsedPosts = JSON.parse(savedPosts);
+
+    if (!Array.isArray(parsedPosts)) {
+      throw new Error('게시글 데이터 형식이 올바르지 않습니다.');
+    }
+
+    return parsedPosts.map(normalizePost);
+  } catch (error) {
+    console.error('게시글 데이터를 읽지 못했습니다.', error);
+
+    savePosts(SAMPLE_POSTS);
+    return SAMPLE_POSTS.map(normalizePost);
+  }
+}
+
+export function getPostById(id) {
+  return getPosts().find(
+    (post) => Number(post.id) === Number(id),
+  ) || null;
+}
+
+export function createPost(postData) {
+  const posts = getPosts();
+
+  const nextId = posts.length
+    ? Math.max(...posts.map((post) => Number(post.id))) + 1
+    : 1;
+
+  const newPost = normalizePost({
+    ...postData,
+    id: nextId,
+    createdAt: new Date().toLocaleDateString('sv-SE'),
+    likes: 0,
+    views: 0,
+  });
+
+  savePosts([newPost, ...posts]);
+
+  return newPost;
+}
+
+export function updatePost(id, postData) {
+  const posts = getPosts();
+
+  const targetIndex = posts.findIndex(
+    (post) => Number(post.id) === Number(id),
+  );
+
+  if (targetIndex === -1) {
+    return null;
+  }
+
+  const updatedPost = normalizePost({
+    ...posts[targetIndex],
+    ...postData,
+    id: Number(id),
+  });
+
+  posts[targetIndex] = updatedPost;
+  savePosts(posts);
+
+  return updatedPost;
+}
+
+export function deletePost(id) {
+  const posts = getPosts();
+
+  const remainingPosts = posts.filter(
+    (post) => Number(post.id) !== Number(id),
+  );
+
+  if (remainingPosts.length === posts.length) {
+    return false;
+  }
+
+  savePosts(remainingPosts);
+  return true;
+}
