@@ -1,8 +1,9 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const categories = [
   { label: '관광지', file: 'tourist-spots.json' },
@@ -27,7 +28,8 @@ const regionOptions = computed(() => {
   const regions = new Set();
   allPlaces.value.forEach((place) => {
     const match = String(place.addr1 || '').match(/부산광역시\s+([^\s]+)/);
-    if (match?.[1]) regions.add(match[1]);
+    // "해운대구광역시" 제외
+    if (match?.[1] && match[1] !== '해운대구광역시') regions.add(match[1]);
   });
   return ['부산 전체', ...Array.from(regions).sort((a, b) => a.localeCompare(b, 'ko'))];
 });
@@ -86,10 +88,14 @@ function applyFilter() {
   renderMarkers();
 }
 
-function resetFilter() {
+async function resetFilter() {
   selectedCategories.value = categories.map((item) => item.label);
   selectedRegion.value = '부산 전체';
   searchKeyword.value = '';
+  
+  // 라우터 업데이트 완료를 기다린 후 필터 적용
+  await router.push({ name: 'explore' });
+  await nextTick();
   applyFilter();
 }
 
@@ -103,7 +109,12 @@ function escapeHtml(value) {
 }
 
 function renderMarkers() {
-  if (!map || !window.L) return;
+  console.log('🗺️ renderMarkers 실행. map 존재?', !!map, 'L 존재?', !!window.L);
+  
+  if (!map || !window.L) {
+    console.error('❌ map이 없습니다!');
+    return;
+  }
   if (markerLayer) markerLayer.clearLayers();
   markerLayer = window.L.layerGroup().addTo(map);
 
@@ -112,7 +123,10 @@ function renderMarkers() {
   filteredPlaces.value.forEach((place) => {
     const latitude = Number.parseFloat(place.mapy);
     const longitude = Number.parseFloat(place.mapx);
-    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      console.log('⚠️ 좌표 오류:', place.title, { latitude, longitude });
+      return;
+    }
 
     const marker = window.L.marker([latitude, longitude]).bindPopup(`
       <strong>${escapeHtml(place.title || '이름 없는 장소')}</strong><br>
@@ -124,25 +138,33 @@ function renderMarkers() {
     visiblePlaces.push({ place, latitude, longitude, marker });
   });
 
+  console.log('📍 생성된 마커 수:', visiblePlaces.length);
+
   if (visiblePlaces.length === 0) {
     map.setView([35.1796, 129.0756], 11);
     return;
   }
 
   const keyword = searchKeyword.value.trim().toLowerCase();
+  console.log('🔍 검색 키워드:', keyword);
+  
   const exactMatch = keyword
-    ? visiblePlaces.find(({ place }) => String(place.title || '').trim().toLowerCase() === keyword)
+    ? visiblePlaces.find(({ place }) => {
+        const match = String(place.title || '').trim().toLowerCase() === keyword;
+        return match;
+      })
     : null;
 
-  // 장소명을 정확히 입력했거나 검색 결과가 한 곳이면 해당 장소를 크게 확대합니다.
   const focusedPlace = exactMatch || (keyword && visiblePlaces.length === 1 ? visiblePlaces[0] : null);
   if (focusedPlace) {
+    console.log('🎯 센터링 대상:', focusedPlace.place.title, { lat: focusedPlace.latitude, lng: focusedPlace.longitude });
+    console.log('📍 map.setView 호출 전:', map.getCenter());
     map.setView([focusedPlace.latitude, focusedPlace.longitude], 17, { animate: true });
+    console.log('📍 map.setView 호출 후:', map.getCenter());
     focusedPlace.marker.openPopup();
     return;
   }
 
-  // 검색 결과가 여러 곳이면 결과 마커 전체가 화면에 들어오도록 자동 조정합니다.
   const bounds = visiblePlaces.map(({ latitude, longitude }) => [latitude, longitude]);
   map.fitBounds(bounds, {
     padding: [40, 40],
@@ -165,19 +187,54 @@ async function initializeMap() {
 onMounted(async () => {
   try {
     await loadPlaces();
-
-    // 게시글 상세 화면에서 전달된 장소 검색어를 자동 적용합니다.
-    const routeKeyword = typeof route.query.q === 'string' ? route.query.q.trim() : '';
-    if (routeKeyword) searchKeyword.value = routeKeyword;
-
     filteredPlaces.value = [...allPlaces.value];
     await initializeMap();
-    if (routeKeyword) applyFilter();
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '지역 탐색 화면을 불러오지 못했습니다.';
+    console.error('❌ 에러:', error);
   } finally {
     loading.value = false;
   }
+});
+
+watchEffect(async () => {
+  const routeQuery = route.query;
+  console.log('👀 route.query 변경 감지:', routeQuery);
+  
+  const routeCategory = typeof routeQuery.category === 'string' ? routeQuery.category.trim() : '';
+  const routeDistrict = typeof routeQuery.district === 'string' ? routeQuery.district.trim() : '';
+  const routePlaceName = typeof routeQuery.placeName === 'string' ? routeQuery.placeName.trim() : '';
+
+  console.log('🎯 새로운 파라미터:', { routeCategory, routeDistrict, routePlaceName });
+
+  // 항상 기본값으로 초기화
+  selectedCategories.value = categories.map((item) => item.label);
+  selectedRegion.value = '부산 전체';
+  searchKeyword.value = '';
+
+  // 쿼리 파라미터가 있으면 적용
+  if (routeCategory) {
+    selectedCategories.value = [routeCategory];
+    console.log('✅ 카테고리 설정:', selectedCategories.value);
+  }
+
+  if (routeDistrict && routeDistrict !== '') {
+    selectedRegion.value = routeDistrict;
+    console.log('✅ 지역 설정:', selectedRegion.value);
+  }
+
+  if (routePlaceName) {
+    searchKeyword.value = routePlaceName;
+    console.log('✅ 검색어 설정:', searchKeyword.value);
+  }
+
+  // 지도가 준비될 때까지 대기
+  await nextTick();
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  console.log('🔍 필터 적용 시작');
+  applyFilter();
+  console.log('✅ 필터 적용 완료. 필터된 장소 수:', filteredPlaces.value.length);
 });
 
 onBeforeUnmount(() => {
