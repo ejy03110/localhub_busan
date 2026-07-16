@@ -32,6 +32,7 @@ const recentPosts = computed(() => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 3);
 });
+
 const popularPosts = computed(() =>
   [...posts.value]
     .sort((a, b) => {
@@ -167,6 +168,7 @@ onMounted(() => {
   loadHomeData();
   loadWeather();
 });
+
 onActivated(loadPosts);
 </script>
 
@@ -228,28 +230,20 @@ onActivated(loadPosts);
     </div>
 
     <div class="community-card-grid">
-      <RouterLink
-        v-for="(post, index) in recentPosts"
-        :key="post.id"
+      <RouterLink 
+        v-for="post in popularPosts" 
+        :key="post.id" 
         class="community-card"
-        :class="{
-          'community-card-no-image': !post.image,
-        }"
         :to="`/posts/${post.id}`"
       >
-      <RouterLink v-for="post in popularPosts" :key="post.id" class="community-card" :to="`/posts/${post.id}`">
         <div class="community-card-content">
           <span class="community-category">
             {{ post.postType || post.topic || '기타' }}
           </span>
 
           <h3>{{ post.title }}</h3>
-
           <p>{{ post.content }}</p>
 
-          <div class="community-meta">
-            <span>♡ {{ 23 - index * 5 }}</span>
-            <span>◎ {{ 145 - index * 28 }}</span>
           <div class="community-meta">
             <span>♡ {{ post.likes || 0 }}</span>
             <span>◎ {{ post.views || 0 }}</span>
@@ -257,16 +251,10 @@ onActivated(loadPosts);
           </div>
         </div>
 
-        <!--
-          게시글에 첨부 사진이 있을 때만 표시합니다.
-          사진이 없으면 이미지 영역도 생성되지 않습니다.
-        -->
         <div
           v-if="post.image"
           class="community-thumb"
-          :style="{
-            backgroundImage: `url('${post.image}')`,
-          }"
+          :style="{ backgroundImage: `url('${post.image}')` }"
           role="img"
           :aria-label="`${post.title} 첨부 사진`"
         ></div>

@@ -81,6 +81,16 @@ export const SAMPLE_POSTS = [
   },
 ];
 
+function normalizeTopic(post) {
+  const validTopics = ['숙박', '관광', '기타'];
+  return validTopics.includes(post.topic) ? post.topic : '기타';
+}
+
+function normalizePostType(post) {
+  const validTypes = ['질문', '후기', '기타'];
+  return validTypes.includes(post.postType) ? post.postType : '기타';
+}
+
 function normalizePost(post) {
   return {
     ...post,
@@ -89,8 +99,8 @@ function normalizePost(post) {
     content: post.content || '',
     password: post.password || '',
     createdAt: post.createdAt || '',
-    topic: normalizeTopic(post),      // 팀원 방식 적용
-    postType: normalizePostType(post), // 팀원 방식 적용
+    topic: normalizeTopic(post),
+    postType: normalizePostType(post),
     place: post.place || '',
     image: post.image || '',
     likes: Number(post.likes || 0),
