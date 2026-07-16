@@ -99,32 +99,56 @@ onMounted(() => {
         <button class="btn btn-ghost" type="button" @click="applySearch">검색</button>
       </div>
 
-      <div class="board-table-wrapper">
-        <table class="board-table">
-          <thead>
-            <tr>
-              <th scope="col">번호</th>
-              <th scope="col">주제</th>
-              <th scope="col">글 성격</th>
-              <th scope="col">제목</th>
-              <th scope="col">작성일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="post in pagedPosts" :key="post.id">
-              <td class="number-col">{{ post.id }}</td>
-              <td>{{ post.topic || '기타' }}</td>
-              <td>{{ post.postType || '기타' }}</td>
-              <td>
-                <RouterLink class="post-title" :to="`/posts/${post.id}`">{{ post.title }}</RouterLink>
-              </td>
-              <td class="date-col">{{ post.createdAt }}</td>
-            </tr>
-            <tr v-if="pagedPosts.length === 0">
-              <td colspan="5">검색 결과가 없습니다.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="community-list">
+        <RouterLink
+          v-for="post in pagedPosts"
+          :key="post.id"
+          class="community-post-card"
+          :to="`/posts/${post.id}`"
+        >
+          <div class="community-post-main">
+            <div class="community-post-badges">
+              <span class="community-badge type-badge">
+                {{ post.postType || '기타' }}
+              </span>
+
+              <span class="community-badge topic-badge">
+                {{ post.topic || '기타' }}
+              </span>
+            </div>
+
+            <h3 class="community-post-title">
+              {{ post.title }}
+            </h3>
+
+            <p class="community-post-summary">
+              {{ post.content || '게시글 내용을 확인해 보세요.' }}
+            </p>
+
+            <div class="community-post-meta">
+              <span>♡ {{ post.likes || 0 }}</span>
+              <span>◎ {{ post.views || 0 }}</span>
+              <span>{{ post.createdAt }}</span>
+            </div>
+          </div>
+
+          <div
+            v-if="post.image"
+            class="community-post-thumbnail"
+          >
+            <img
+              :src="post.image"
+              :alt="post.title"
+            >
+          </div>
+        </RouterLink>
+
+        <div
+          v-if="pagedPosts.length === 0"
+          class="community-empty"
+        >
+          검색 결과가 없습니다.
+        </div>
       </div>
 
       <div class="pagination" aria-label="게시판 페이지 이동">
@@ -143,5 +167,12 @@ onMounted(() => {
         <button class="page-button" type="button" aria-label="다음 페이지" :disabled="currentPage === totalPages" @click="movePage(currentPage + 1)">›</button>
       </div>
     </section>
+    <RouterLink
+      class="community-write-fab"
+      to="/posts/new"
+      aria-label="게시글 작성"
+    >
+      +
+    </RouterLink>
   </main>
 </template>
