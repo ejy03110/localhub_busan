@@ -228,7 +228,6 @@ onActivated(loadPosts);
     </div>
 
     <div class="community-card-grid">
-<<<<<<< HEAD
       <RouterLink
         v-for="(post, index) in recentPosts"
         :key="post.id"
@@ -238,9 +237,7 @@ onActivated(loadPosts);
         }"
         :to="`/posts/${post.id}`"
       >
-=======
       <RouterLink v-for="post in popularPosts" :key="post.id" class="community-card" :to="`/posts/${post.id}`">
->>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
         <div class="community-card-content">
           <span class="community-category">
             {{ post.postType || post.topic || '기타' }}
