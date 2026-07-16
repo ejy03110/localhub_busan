@@ -249,16 +249,13 @@ onActivated(loadPosts);
           <h3>{{ post.title }}</h3>
 
           <p>{{ post.content }}</p>
-<<<<<<< HEAD
 
           <div class="community-meta">
             <span>♡ {{ 23 - index * 5 }}</span>
             <span>◎ {{ 145 - index * 28 }}</span>
-=======
           <div class="community-meta">
             <span>♡ {{ post.likes || 0 }}</span>
             <span>◎ {{ post.views || 0 }}</span>
->>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
             <span>{{ post.createdAt }}</span>
           </div>
         </div>
