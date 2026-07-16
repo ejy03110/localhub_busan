@@ -1746,3 +1746,62 @@ textarea {
   color: var(--muted);
   font-size: 14px;
 }
+
+/* =========================================================
+   장소 탐색 화면 확장
+   - 필터 패널 축소, 지도 확대, 정보 바 위치 조정
+   ========================================================= */
+
+.explore-layout {
+  grid-template-columns: 220px 1fr;
+}
+
+.demo-map,
+.explore-map {
+  min-height: 850px !important;
+}
+
+.explore-map-info {
+  position: static;  /* absolute → static */
+  margin: 20px 0;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.96);
+  color: inherit;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-weight: normal;
+  z-index: auto;
+}
+
+.page {
+  padding: 28px 24px 88px;  /* 150px → 88px (원래대로) */
+}
+
+.filter-panel {
+  padding: 24px;
+}
+
+.explore-filter-actions {
+  gap: 12px;
+  margin-top: 20px;
+  display: flex;
+}
+
+.explore-filter-actions .btn {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.explore-reset-button {
+  background: #4a8eff;
+  color: white;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
