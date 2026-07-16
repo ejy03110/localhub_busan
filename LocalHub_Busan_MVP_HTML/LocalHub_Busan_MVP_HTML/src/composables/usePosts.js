@@ -28,6 +28,8 @@ export function normalizePost(post) {
     id: Number(post.id),
     topic: normalizeTopic(post),
     postType: normalizePostType(post),
+    likes: Number(post.likes || 0),
+    views: Number(post.views || 0),
   };
 }
 
@@ -87,4 +89,36 @@ export function deletePost(id) {
   if (filtered.length === posts.length) return false;
   savePosts(filtered);
   return true;
+}
+
+export function increasePostView(id) {
+  const posts = getPosts();
+
+  const index = posts.findIndex(
+    (post) => post.id === Number(id)
+  );
+
+  if (index < 0) return null;
+
+  posts[index].views = Number(posts[index].views || 0) + 1;
+
+  savePosts(posts);
+
+  return posts[index];
+}
+
+export function increasePostLike(id) {
+  const posts = getPosts();
+
+  const index = posts.findIndex(
+    (post) => post.id === Number(id)
+  );
+
+  if (index < 0) return null;
+
+  posts[index].likes = Number(posts[index].likes || 0) + 1;
+
+  savePosts(posts);
+
+  return posts[index];
 }

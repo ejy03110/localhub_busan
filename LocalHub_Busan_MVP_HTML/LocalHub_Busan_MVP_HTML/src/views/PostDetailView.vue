@@ -1,12 +1,24 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PasswordModal from '../components/PasswordModal.vue';
-import { deletePost, getPostById } from '../composables/usePosts';
+import {
+  deletePost,
+  getPostById,
+  increasePostLike,
+  increasePostView,
+} from '../composables/usePosts';
 
 const route = useRoute();
 const router = useRouter();
 const post = ref(getPostById(route.params.id));
+onMounted(() => {
+  const updatedPost = increasePostView(route.params.id);
+
+  if (updatedPost) {
+    post.value = updatedPost;
+  }
+});
 const modalMode = ref('');
 const passwordError = ref('');
 
@@ -70,6 +82,13 @@ function confirmPassword(password) {
     router.push({ name: 'board' });
   }
 }
+function handleLike() {
+  const updatedPost = increasePostLike(route.params.id);
+
+  if (updatedPost) {
+    post.value = updatedPost;
+  }
+}
 </script>
 
 <template>
@@ -82,6 +101,19 @@ function confirmPassword(password) {
         <div class="post-meta">{{ meta }}</div>
       </header>
       <div class="detail-body">{{ post.content }}</div>
+      <div class="detail-reactions">
+        <button
+          class="post-like-button"
+          type="button"
+          @click="handleLike"
+        >
+          ♡ 좋아요 {{ post.likes || 0 }}
+        </button>
+
+        <span class="post-view-count">
+          👁 조회수 {{ post.views || 0 }}
+        </span>
+      </div>
 
       <section v-if="locationKeyword" class="post-location-card" aria-labelledby="post-location-title">
         <div class="post-location-icon" aria-hidden="true">📍</div>

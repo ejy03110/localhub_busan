@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onActivated, onMounted, ref } from 'vue';
 import { getPosts } from '../composables/usePosts';
 
 
@@ -10,7 +10,21 @@ const placeError = ref('');
 const stats = ref({ 관광지: 0, 문화시설: 0, 숙박: 0, 쇼핑: 0 });
 const weather = ref({ icon: '🌤️', temperature: '--°', description: '날씨 정보를 불러오는 중입니다.', high: '🔥최고: --°', low: '❄️최저: --°', rain: '🌧️강수 --mm', wind: '💨바람 --km/h' });
 
-const recentPosts = computed(() => [...posts.value].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 3));
+const popularPosts = computed(() =>
+  [...posts.value]
+    .sort((a, b) => {
+      const scoreA =
+        Number(a.likes || 0) * 3 +
+        Number(a.views || 0);
+
+      const scoreB =
+        Number(b.likes || 0) * 3 +
+        Number(b.views || 0);
+
+      return scoreB - scoreA;
+    })
+    .slice(0, 3)
+);
 
 function loadPosts() {
   posts.value = getPosts();
@@ -93,6 +107,7 @@ onMounted(() => {
   loadHomeData();
   loadWeather();
 });
+onActivated(loadPosts);
 </script>
 
 <template>
@@ -117,12 +132,16 @@ onMounted(() => {
       <RouterLink class="btn btn-ghost" to="/board">전체보기</RouterLink>
     </div>
     <div class="community-card-grid">
-      <RouterLink v-for="(post, index) in recentPosts" :key="post.id" class="community-card" :to="`/posts/${post.id}`">
+      <RouterLink v-for="post in popularPosts" :key="post.id" class="community-card" :to="`/posts/${post.id}`">
         <div class="community-card-content">
           <span class="community-category">{{ post.postType || post.topic || '기타' }}</span>
           <h3>{{ post.title }}</h3>
           <p>{{ post.content }}</p>
-          <div class="community-meta"><span>♡ {{ 23 - index * 5 }}</span><span>◎ {{ 145 - index * 28 }}</span><span>{{ post.createdAt }}</span></div>
+          <div class="community-meta">
+            <span>♡ {{ post.likes || 0 }}</span>
+            <span>◎ {{ post.views || 0 }}</span>
+            <span>{{ post.createdAt }}</span>
+          </div>
         </div>
         <div class="community-thumb" style="background-image:url('/images/hero-busan.jpg')"></div>
       </RouterLink>

@@ -1720,3 +1720,29 @@ textarea {
 .community-write-fab {
   display: none;
 }
+
+.detail-reactions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px 24px;
+}
+
+.post-like-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #f2b8c0;
+  border-radius: 12px;
+  background: #fff5f6;
+  color: #d9485f;
+  font-weight: 800;
+}
+
+.post-like-button:hover {
+  background: #ffe9ec;
+}
+
+.post-view-count {
+  color: var(--muted);
+  font-size: 14px;
+}
