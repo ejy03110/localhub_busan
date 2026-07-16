@@ -1720,3 +1720,21 @@ textarea {
 .community-write-fab {
   display: none;
 }
+
+
+/* 게시글 사진이 없는 인기 게시글은 본문이 카드 전체 폭을 사용합니다. */
+.community-card-no-image {
+  grid-template-columns: 1fr;
+}
+
+.community-card-no-image .community-card-content {
+  width: 100%;
+}
+
+/* 인기 게시글 첨부 사진 */
+.community-thumb {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
