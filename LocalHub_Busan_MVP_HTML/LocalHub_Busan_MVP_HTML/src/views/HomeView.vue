@@ -6,7 +6,6 @@ const posts = ref([]);
 const featuredPlaces = ref([]);
 const placeError = ref('');
 
-<<<<<<< HEAD
 const stats = ref({
   관광지: 0,
   문화시설: 0,
@@ -33,7 +32,6 @@ const recentPosts = computed(() => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 3);
 });
-=======
 const popularPosts = computed(() =>
   [...posts.value]
     .sort((a, b) => {
@@ -49,7 +47,6 @@ const popularPosts = computed(() =>
     })
     .slice(0, 3)
 );
->>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
 
 function loadPosts() {
   posts.value = getPosts();
