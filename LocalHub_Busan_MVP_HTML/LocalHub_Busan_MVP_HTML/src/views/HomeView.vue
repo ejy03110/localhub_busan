@@ -1,11 +1,12 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onActivated, onMounted, ref } from 'vue';
 import { getPosts } from '../composables/usePosts';
 
 const posts = ref([]);
 const featuredPlaces = ref([]);
 const placeError = ref('');
 
+<<<<<<< HEAD
 const stats = ref({
   관광지: 0,
   문화시설: 0,
@@ -32,6 +33,23 @@ const recentPosts = computed(() => {
     .sort((a, b) => Number(b.id) - Number(a.id))
     .slice(0, 3);
 });
+=======
+const popularPosts = computed(() =>
+  [...posts.value]
+    .sort((a, b) => {
+      const scoreA =
+        Number(a.likes || 0) * 3 +
+        Number(a.views || 0);
+
+      const scoreB =
+        Number(b.likes || 0) * 3 +
+        Number(b.views || 0);
+
+      return scoreB - scoreA;
+    })
+    .slice(0, 3)
+);
+>>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
 
 function loadPosts() {
   posts.value = getPosts();
@@ -152,6 +170,7 @@ onMounted(() => {
   loadHomeData();
   loadWeather();
 });
+onActivated(loadPosts);
 </script>
 
 <template>
@@ -212,6 +231,7 @@ onMounted(() => {
     </div>
 
     <div class="community-card-grid">
+<<<<<<< HEAD
       <RouterLink
         v-for="(post, index) in recentPosts"
         :key="post.id"
@@ -221,6 +241,9 @@ onMounted(() => {
         }"
         :to="`/posts/${post.id}`"
       >
+=======
+      <RouterLink v-for="post in popularPosts" :key="post.id" class="community-card" :to="`/posts/${post.id}`">
+>>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
         <div class="community-card-content">
           <span class="community-category">
             {{ post.postType || post.topic || '기타' }}
@@ -229,10 +252,16 @@ onMounted(() => {
           <h3>{{ post.title }}</h3>
 
           <p>{{ post.content }}</p>
+<<<<<<< HEAD
 
           <div class="community-meta">
             <span>♡ {{ 23 - index * 5 }}</span>
             <span>◎ {{ 145 - index * 28 }}</span>
+=======
+          <div class="community-meta">
+            <span>♡ {{ post.likes || 0 }}</span>
+            <span>◎ {{ post.views || 0 }}</span>
+>>>>>>> d7e4628194c8c7fa1c408bf7b0ee03fb39834a43
             <span>{{ post.createdAt }}</span>
           </div>
         </div>

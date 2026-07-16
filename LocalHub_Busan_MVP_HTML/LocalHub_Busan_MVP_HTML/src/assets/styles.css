@@ -1721,7 +1721,6 @@ textarea {
   display: none;
 }
 
-
 /* 게시글 사진이 없는 인기 게시글은 본문이 카드 전체 폭을 사용합니다. */
 .community-card-no-image {
   grid-template-columns: 1fr;
@@ -1738,3 +1737,28 @@ textarea {
   background-size: cover;
 }
 
+.detail-reactions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px 24px;
+}
+
+.post-like-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #f2b8c0;
+  border-radius: 12px;
+  background: #fff5f6;
+  color: #d9485f;
+  font-weight: 800;
+}
+
+.post-like-button:hover {
+  background: #ffe9ec;
+}
+
+.post-view-count {
+  color: var(--muted);
+  font-size: 14px;
+}

@@ -89,8 +89,8 @@ function normalizePost(post) {
     content: post.content || '',
     password: post.password || '',
     createdAt: post.createdAt || '',
-    topic: post.topic || '기타',
-    postType: post.postType || '기타',
+    topic: normalizeTopic(post),      // 팀원 방식 적용
+    postType: normalizePostType(post), // 팀원 방식 적용
     place: post.place || '',
     image: post.image || '',
     likes: Number(post.likes || 0),
@@ -191,4 +191,38 @@ export function deletePost(id) {
 
   savePosts(remainingPosts);
   return true;
+// (기존 코드 뒷부분)
+}
+
+
+export function increasePostView(id) {
+  const posts = getPosts();
+
+  const index = posts.findIndex(
+    (post) => post.id === Number(id)
+  );
+
+  if (index < 0) return null;
+
+  posts[index].views = Number(posts[index].views || 0) + 1;
+
+  savePosts(posts);
+
+  return posts[index];
+}
+
+export function increasePostLike(id) {
+  const posts = getPosts();
+
+  const index = posts.findIndex(
+    (post) => post.id === Number(id)
+  );
+
+  if (index < 0) return null;
+
+  posts[index].likes = Number(posts[index].likes || 0) + 1;
+
+  savePosts(posts);
+
+  return posts[index];
 }
